@@ -170,16 +170,33 @@ public class MenuAnggota extends MenuManager {
             String judul = (item != null) ? item.getJudul() : p.getIdItem();
 
             String statusLabel;
+            String infoTanggal;
             switch (p.getStatus()) {
-                case DIPINJAM -> statusLabel = "Dipinjam";
-                case DIKEMBALIKAN -> statusLabel = "Dikembalikan";
-                case TERLAMBAT -> statusLabel = "Terlambat";
-                default -> statusLabel = p.getStatus().toString();
+                case DIPINJAM -> {
+                    statusLabel = "Dipinjam";
+                    infoTanggal = " | Batas: " + p.getTanggalKembali();
+                }
+                case DIKEMBALIKAN -> {
+                    statusLabel = "Dikembalikan";
+                    infoTanggal = " | Dikembalikan: "
+                        + (p.getTanggalDikembalikan() != null ? p.getTanggalDikembalikan() : "-");
+                }
+                case TERLAMBAT -> {
+                    statusLabel = "Terlambat";
+                    infoTanggal = " | Jatuh Tempo: " + p.getTanggalKembali()
+                        + " | Kembali: "
+                        + (p.getTanggalDikembalikan() != null ? p.getTanggalDikembalikan() : "-");
+                }
+                default -> {
+                    statusLabel = p.getStatus().toString();
+                    infoTanggal = "";
+                }
             }
 
             System.out.println("  #" + p.getIdPeminjaman()
                 + " | " + judul
                 + " | Pinjam: " + p.getTanggalPinjam()
+                + infoTanggal
                 + " | Status: " + statusLabel
                 + (p.getDenda() > 0 ? " | Denda: Rp" + String.format("%,.0f", p.getDenda()) : ""));
         }

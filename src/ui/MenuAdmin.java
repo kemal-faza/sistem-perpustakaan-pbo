@@ -161,10 +161,10 @@ public class MenuAdmin extends MenuManager {
             }
         }
 
-        String kategori = bacaInput("Kategori baru");
+        // Kategori: kosongkan → lewati, ketik apapun → picker menu
+        String kategori = bacaInput("Kategori baru (kosongi untuk lewati)");
         if (!kategori.isEmpty()) {
-            // Coba parse sebagai nama display enum
-            Kategori k = Kategori.fromString(kategori);
+            Kategori k = pilihKategori();
             item.setKategori(k);
         }
 

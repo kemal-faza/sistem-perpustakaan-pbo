@@ -3,6 +3,7 @@ package service;
 import com.google.gson.reflect.TypeToken;
 import collection.Repository;
 import exception.*;
+import interfaces.ILibraryService;
 import interfaces.ISearchable;
 import model.*;
 import model.base.ItemPerpustakaan;
@@ -17,7 +18,7 @@ import java.util.List;
  * Menggunakan pattern Singleton. Mengelola semua business logic
  * dan mengorkestrasi interaksi antara model-model.
  */
-public class PerpustakaanService {
+public class PerpustakaanService implements ILibraryService {
 
     /** Path file JSON untuk persistensi */
     private static final String FILE_BUKU = "data/buku.json";

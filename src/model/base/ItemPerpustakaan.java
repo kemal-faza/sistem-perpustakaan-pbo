@@ -120,8 +120,8 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
         return judul.toLowerCase().contains(lower)
             || (penulis != null && penulis.toLowerCase().contains(lower))
             || kategori.getDisplayName().toLowerCase().contains(lower)
-            || penerbit.toLowerCase().contains(lower)
-            || id.toLowerCase().contains(lower);
+            || (penerbit != null && penerbit.toLowerCase().contains(lower))
+            || (id != null && id.toLowerCase().contains(lower));
     }
 
     // === Override Method dari Object ===

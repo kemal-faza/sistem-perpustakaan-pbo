@@ -81,18 +81,19 @@ perpustakaan-pbo/
 #### `ItemPerpustakaan` (abstract)
 
 **Atribut:**
-
 - `id: String`
 - `judul: String`
 - `tahunTerbit: int`
-- `kategori: String`
-- `tersedia: boolean`
+- `kategori: Kategori` (enum: TEKNOLOGI, ILMIAH, FIKSI, NON_FIKSI, SEJARAH, PENDIDIKAN, REFERENSI, UMUM)
 - `penerbit: String`
+- `penulis: String`
+- `stok: int` (jumlah total copy)
+- `dipinjam: int` (jumlah yang sedang dipinjam)
+- Method: `isTersedia()` → `(stok - dipinjam) > 0`, `getTersedia()` → `stok - dipinjam`
 
 **Method:**
-
 - `ItemPerpustakaan()` (default constructor)
-- `ItemPerpustakaan(String id, String judul, int tahunTerbit, String kategori, String penerbit)` (overloaded constructor)
+- `ItemPerpustakaan(String id, String judul, int tahunTerbit, Kategori kategori, String penerbit, String penulis, int stok)` (overloaded constructor)
 - Getter/setter (enkapsulasi)
 - `abstract double hitungDenda(int hariTerlambat)`
 - `abstract String getTipe()`
@@ -145,8 +146,6 @@ perpustakaan-pbo/
 
 - `id: String`
 - `nama: String`
-- `email: String`
-- `telepon: String`
 - `static final int MAX_PINJAM = 3`
 - `pinjamanAktif: int`
 - Getter/setter, `tambahPinjaman()`, `kurangiPinjaman()`, `bisaPinjam(): boolean`
@@ -169,7 +168,8 @@ perpustakaan-pbo/
 - `denda: double`
 - `double hitungDenda()`
 - `void perpanjang()`
-- `void kembalikan()`
+- `int kembalikan()` (return hariTerlambat)
+- `int getJumlahPerpanjang()`
 
 #### `StatusPeminjaman` (Enum)
 
@@ -482,9 +482,11 @@ classDiagram
 		"id": "B001",
 		"judul": "Pemrograman Berorientasi Objek",
 		"tahunTerbit": 2024,
-		"kategori": "Teknologi",
+		"kategori": "TEKNOLOGI",
 		"penerbit": "Informatika",
-		"tersedia": true,
+		"penulis": "Tim Pengajar PBO",
+		"stok": 3,
+		"dipinjam": 0,
 		"jumlahHalaman": 350,
 		"lokasiRak": "A1-01"
 	}
@@ -498,8 +500,6 @@ classDiagram
 	{
 		"id": "A001",
 		"nama": "Budi Santoso",
-		"email": "budi@email.com",
-		"telepon": "08123456789",
 		"pinjamanAktif": 0
 	}
 ]
@@ -513,11 +513,12 @@ classDiagram
 		"idPeminjaman": "P001",
 		"idAnggota": "A001",
 		"idItem": "B001",
-		"tanggalPinjam": "2024-05-01",
-		"tanggalKembali": "2024-05-08",
+		"tanggalPinjam": "2026-05-01",
+		"tanggalKembali": "2026-05-08",
 		"tanggalDikembalikan": null,
 		"status": "DIPINJAM",
-		"denda": 0.0
+		"denda": 0.0,
+		"jumlahPerpanjang": 0
 	}
 ]
 ```

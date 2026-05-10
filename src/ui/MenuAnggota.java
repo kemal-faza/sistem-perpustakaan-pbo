@@ -1,6 +1,7 @@
 package ui;
 
 import exception.*;
+import interfaces.ILibraryService;
 import model.*;
 import model.base.ItemPerpustakaan;
 import service.PerpustakaanService;
@@ -22,7 +23,7 @@ public class MenuAnggota extends MenuManager {
         "Perpanjang Peminjaman"
     };
 
-    private PerpustakaanService service;
+    private ILibraryService service;
 
     public MenuAnggota() {
         this.service = PerpustakaanService.getInstance();

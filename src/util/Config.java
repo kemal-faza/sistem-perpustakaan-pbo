@@ -61,6 +61,12 @@ public class Config {
 
     /** Mendapatkan password admin dari konfigurasi */
     public String getAdminPassword() {
-        return props.getProperty("admin.password", "admin123");
+        String pass = props.getProperty("admin.password");
+        if (pass == null || pass.equals("CHANGE_ME")) {
+            throw new IllegalStateException(
+                "Password admin tidak dikonfigurasi di config.properties.\n"
+                + "Copy config.properties.example dan ganti CHANGE_ME dengan password.");
+        }
+        return pass;
     }
 }

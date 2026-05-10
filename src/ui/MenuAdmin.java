@@ -1,6 +1,7 @@
 package ui;
 
 import exception.*;
+import interfaces.ILibraryService;
 import model.*;
 import model.base.ItemPerpustakaan;
 import service.PerpustakaanService;
@@ -25,7 +26,7 @@ public class MenuAdmin extends MenuManager {
         "Laporan Peminjaman"
     };
 
-    private PerpustakaanService service;
+    private ILibraryService service;
 
     public MenuAdmin() {
         this.service = PerpustakaanService.getInstance();
@@ -98,19 +99,35 @@ public class MenuAdmin extends MenuManager {
         cetakInfo("Tipe: 1. Buku Fisik  2. Buku Digital  3. Jurnal");
         int tipe = bacaInt("Pilih tipe");
 
-        ItemPerpustakaan item;
+        ItemPerpustakaan item = promptDetailTipe(tipe, id, judul, tahun, kategori, penulis, penerbit);
+        if (item == null) return;
+
+        String hasil = service.tambahBuku(item);
+        if (hasil.equals("stok")) {
+            cetakSukses("Stok item '" + judul + "' berhasil ditambahkan.");
+        } else {
+            cetakSukses("Item '" + judul + "' berhasil ditambahkan (ID: " + id + ").");
+        }
+    }
+
+    /**
+     * Meminta input detail spesifik berdasarkan tipe item.
+     * @return ItemPerpustakaan yang sudah terisi, atau null jika tipe tidak valid
+     */
+    private ItemPerpustakaan promptDetailTipe(int tipe, String id, String judul, int tahun,
+            Kategori kategori, String penulis, String penerbit) {
         switch (tipe) {
             case 1 -> {
                 int halaman = bacaIntPositif("Jumlah Halaman");
                 String rak = bacaLokasiRak();
                 int stok = bacaIntPositif("Jumlah Stok");
-                item = new BukuFisik(id, judul, tahun, kategori, penerbit, penulis,
+                return new BukuFisik(id, judul, tahun, kategori, penerbit, penulis,
                                      halaman, rak, stok);
             }
             case 2 -> {
-                double ukuran = bacaDouble("Ukuran File (MB)");
+                double ukuran = bacaDoublePositif("Ukuran File (MB)");
                 String format = bacaInput("Format (PDF/EPUB)");
-                item = new BukuDigital(id, judul, tahun, kategori, penerbit, penulis,
+                return new BukuDigital(id, judul, tahun, kategori, penerbit, penulis,
                                        ukuran, format);
             }
             case 3 -> {
@@ -118,20 +135,13 @@ public class MenuAdmin extends MenuManager {
                 int nomor = bacaIntPositif("Nomor");
                 String bidang = bacaInput("Bidang Ilmu");
                 int stok = bacaIntPositif("Jumlah Stok");
-                item = new Jurnal(id, judul, tahun, kategori, penerbit, penulis,
+                return new Jurnal(id, judul, tahun, kategori, penerbit, penulis,
                                   volume, nomor, bidang, stok);
             }
             default -> {
                 cetakError("Tipe tidak valid.");
-                return;
+                return null;
             }
-        }
-
-        String hasil = service.tambahBuku(item);
-        if (hasil.equals("stok")) {
-            cetakSukses("Stok item '" + judul + "' berhasil ditambahkan.");
-        } else {
-            cetakSukses("Item '" + judul + "' berhasil ditambahkan (ID: " + id + ").");
         }
     }
 

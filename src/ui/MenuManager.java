@@ -2,8 +2,8 @@ package ui;
 
 import java.util.Scanner;
 import java.util.List;
+import interfaces.ILibraryService;
 import model.base.ItemPerpustakaan;
-import service.PerpustakaanService;
 
 /**
  * Base class untuk menu CLI.
@@ -79,6 +79,15 @@ public class MenuManager {
         }
     }
 
+    /** Membaca input double positif (> 0) */
+    public double bacaDoublePositif(String prompt) {
+        while (true) {
+            double nilai = bacaDouble(prompt);
+            if (nilai > 0) return nilai;
+            System.out.println("  [Error] Masukkan angka positif.");
+        }
+    }
+
     /** Membaca input wajib (tidak boleh kosong) */
     public String bacaInputWajib(String prompt) {
         while (true) {
@@ -125,10 +134,10 @@ public class MenuManager {
 
     /**
      * Method pencarian buku bersama untuk Admin dan Anggota.
-     * @param service referensi PerpustakaanService
+     * @param service referensi ILibraryService
      * @param tampilStatus jika true, tampilkan status ketersediaan (untuk Anggota)
      */
-    public void cariBuku(PerpustakaanService service, boolean tampilStatus) {
+    public void cariBuku(ILibraryService service, boolean tampilStatus) {
         tampilkanHeader("CARI BUKU");
 
         String keyword = bacaInput("Kata kunci");

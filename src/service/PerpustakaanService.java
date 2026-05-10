@@ -414,6 +414,15 @@ public class PerpustakaanService {
     }
 
     /**
+     * Mendapatkan peminjaman berdasarkan ID.
+     * @param idPeminjaman ID peminjaman
+     * @return peminjaman jika ditemukan, null jika tidak
+     */
+    public Peminjaman getPeminjamanById(String idPeminjaman) {
+        return repoPeminjaman.findById(idPeminjaman);
+    }
+
+    /**
      * Mendapatkan total pendapatan denda.
      */
     public double getTotalDenda() {

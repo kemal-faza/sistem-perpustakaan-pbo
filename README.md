@@ -270,7 +270,7 @@ java -cp "out:lib/*" Main
 
 ### Admin
 - **Username:** `admin`
-- **Password:** lihat `config.properties` (atau default: `admin123`)
+- **Password:** lihat `config.properties` (copy dari `config.properties.example` jika belum ada)
 
 ### Anggota (Sample Data)
 | ID | Nama |

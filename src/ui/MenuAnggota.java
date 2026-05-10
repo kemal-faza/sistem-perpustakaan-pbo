@@ -188,18 +188,34 @@ public class MenuAnggota extends MenuManager {
     private void perpanjangPeminjaman() {
         tampilkanHeader("PERPANJANG PEMINJAMAN");
 
-        String idPeminjaman = bacaInput("ID Peminjaman");
-
-        // Validasi ownership: cek dulu peminjaman milik siapa
+        // Tampilkan daftar peminjaman aktif + counter perpanjang
         Anggota anggota = service.getCurrentAnggota();
-        List<Peminjaman> semua = service.getAllPeminjaman();
-        Peminjaman target = null;
-        for (Peminjaman p : semua) {
-            if (p.getId().equals(idPeminjaman)) {
-                target = p;
-                break;
-            }
+        if (anggota == null) {
+            cetakError("Session anggota tidak valid. Silakan login ulang.");
+            return;
         }
+
+        List<Peminjaman> aktif = service.getPeminjamanAktif().stream()
+                .filter(p -> p.getIdAnggota().equals(anggota.getId())).toList();
+
+        if (aktif.isEmpty()) {
+            cetakInfo("Tidak ada peminjaman aktif.");
+            return;
+        }
+
+        cetakInfo("Peminjaman aktif:");
+        for (Peminjaman p : aktif) {
+            ItemPerpustakaan item = service.getBukuById(p.getIdItem());
+            String judul = (item != null) ? item.getJudul() : p.getIdItem();
+            cetakInfo("#" + p.getIdPeminjaman() + " | " + judul
+                + " | Perpanjang: " + p.getJumlahPerpanjang() + "/" + Peminjaman.MAX_PERPANJANG
+                + " | Batas: " + p.getTanggalKembali());
+        }
+
+        String idPeminjaman = bacaInput("\nID Peminjaman yang ingin diperpanjang");
+
+        // Validasi ownership: gunakan findById langsung (tanpa loop)
+        Peminjaman target = service.getPeminjamanById(idPeminjaman);
         if (target == null) {
             cetakError("Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
             return;

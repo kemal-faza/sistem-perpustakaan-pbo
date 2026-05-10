@@ -18,6 +18,10 @@ public class Peminjaman implements Identifiable {
     private LocalDate tanggalDikembalikan;  // Tanggal aktual dikembalikan (null jika belum)
     private StatusPeminjaman status;
     private double denda;
+    private int jumlahPerpanjang;
+
+    /** Maksimal perpanjangan yang diizinkan */
+    public static final int MAX_PERPANJANG = 2;
 
     /** Constructor default */
     public Peminjaman() {
@@ -36,6 +40,7 @@ public class Peminjaman implements Identifiable {
         this.tanggalDikembalikan = null;
         this.status = StatusPeminjaman.DIPINJAM;
         this.denda = 0.0;
+        this.jumlahPerpanjang = 0;
     }
 
     // === Getter & Setter ===
@@ -82,13 +87,21 @@ public class Peminjaman implements Identifiable {
         return 0;
     }
 
-    /** Memperpanjang masa pinjam (3 hari) */
+    public int getJumlahPerpanjang() { return jumlahPerpanjang; }
+
+    /** Memperpanjang masa pinjam (3 hari), maksimal 2× */
     public void perpanjang() {
         if (status != StatusPeminjaman.DIPINJAM) {
             throw new IllegalStateException(
                 "Peminjaman #" + idPeminjaman + " sudah selesai, tidak bisa diperpanjang.");
         }
+        if (jumlahPerpanjang >= MAX_PERPANJANG) {
+            throw new IllegalStateException(
+                "Peminjaman #" + idPeminjaman + " sudah mencapai batas perpanjangan ("
+                + MAX_PERPANJANG + "×).");
+        }
         this.tanggalKembali = this.tanggalKembali.plusDays(3);
+        this.jumlahPerpanjang++;
     }
 
     /**

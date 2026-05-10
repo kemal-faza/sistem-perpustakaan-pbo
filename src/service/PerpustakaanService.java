@@ -38,7 +38,7 @@ public class PerpustakaanService {
     private Anggota currentAnggota;
 
     // === Data Sample Flag ===
-    private boolean sampleLoaded = false;
+    private volatile boolean sampleLoaded = false;
 
     /**
      * Constructor private (Singleton).

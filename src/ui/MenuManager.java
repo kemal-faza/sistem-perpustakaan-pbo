@@ -6,7 +6,7 @@ import model.base.ItemPerpustakaan;
 import service.PerpustakaanService;
 
 /**
- * Abstract base class untuk menu CLI.
+ * Base class untuk menu CLI.
  * Menyediakan utility methods untuk input/output konsol.
  */
 public class MenuManager {
@@ -67,6 +67,24 @@ public class MenuManager {
             } catch (NumberFormatException e) {
                 System.out.println("  [Error] Masukkan angka yang valid (contoh: 5.2).");
             }
+        }
+    }
+
+    /** Membaca input integer positif (> 0) */
+    public int bacaIntPositif(String prompt) {
+        while (true) {
+            int nilai = bacaInt(prompt);
+            if (nilai > 0) return nilai;
+            System.out.println("  [Error] Masukkan angka positif.");
+        }
+    }
+
+    /** Membaca input wajib (tidak boleh kosong) */
+    public String bacaInputWajib(String prompt) {
+        while (true) {
+            String input = bacaInput(prompt);
+            if (!input.trim().isEmpty()) return input.trim();
+            System.out.println("  [Error] " + prompt + " tidak boleh kosong.");
         }
     }
 

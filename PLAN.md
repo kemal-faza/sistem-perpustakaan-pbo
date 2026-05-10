@@ -196,7 +196,7 @@ perpustakaan-pbo/
 + generateId(): String
 ```
 
-Repository adalah **bounded generic**: `Repository<T extends ItemPerpustakaan>` untuk repository buku.
+Repository adalah **bounded generic**: `Repository<T extends Identifiable>` untuk repository buku.
 
 ### 3.6 Service Layer
 
@@ -208,14 +208,17 @@ Repository adalah **bounded generic**: `Repository<T extends ItemPerpustakaan>` 
 - `- repositoryPeminjaman: Repository<Peminjaman>`
 - `- currentUser: Object`
 - `+ static getInstance(): PerpustakaanService`
-- `+ login(String id, String password): boolean`
+- `+ loginAdmin(String username, String password): boolean`
+- `+ loginAnggota(String idAnggota): void`
 - `+ tambahBuku(ItemPerpustakaan buku): void`
 - `+ hapusBuku(String id): void`
 - `+ cariBuku(String keyword): List<ItemPerpustakaan>`
 - `+ pinjamBuku(String idBuku, String idAnggota): void`
-- `+ kembalikanBuku(String idPeminjaman): void`
+- `+ kembalikanBuku(String idPeminjaman): Peminjaman`
 - `+ perpanjangPeminjaman(String idPeminjaman): void`
 - `+ getRiwayatPeminjaman(String idAnggota): List<Peminjaman>`
+- `+ simpanSemua(): void`
+- `+ getTotalDenda(): double`
 
 ### 3.7 Exception Custom
 
@@ -475,7 +478,7 @@ classDiagram
 ```json
 [
 	{
-		"type": "BukuFisik",
+		"type": "Buku Fisik",
 		"id": "B001",
 		"judul": "Pemrograman Berorientasi Objek",
 		"tahunTerbit": 2024,
@@ -519,46 +522,46 @@ classDiagram
 ]
 ```
 
+> **Catatan:** File `peminjaman.json` dibuat otomatis saat transaksi peminjaman pertama. Jika tidak ada, sistem akan membuatnya.
+
 ---
 
 ## 7. Checklist Konsep OOP yang Tercakup
 
-| #   | Konsep                                    | Implementasi                                           | Status |
-| --- | ----------------------------------------- | ------------------------------------------------------ | ------ |
-| #   | Konsep                                    | Implementasi                                                                  | Status |
-| --- | ----------------------------------------- | ----------------------------------------------------------------------------- | ------ |
-| 1   | **Class & Object**                        | Semua model class                                                             | ✅     |
-| 2   | **Constructor (default & parameterized)** | Semua model class                                                             | ✅     |
-| 3   | **Constructor Overloading**               | ItemPerpustakaan, Anggota                                                     | ✅     |
-| 4   | **Enkapsulasi**                           | Private fields + public getter/setter                                         | ✅     |
-| 5   | **Inheritance (Single & Hierarchical)**   | BukuFisik, Digital, Jurnal ← ItemPerpustakaan                                 | ✅     |
-| 6   | **Abstract Class**                        | ItemPerpustakaan                                                              | ✅     |
-| 7   | **Abstract Method**                       | hitungDenda(), getTipe()                                                      | ✅     |
-| 8   | **Interface**                             | Identifiable, IBorrowable, ISearchable                                        | ✅     |
-| 9   | **Implements Multiple Interface**         | ItemPerpustakaan implements Identifiable, IBorrowable, ISearchable            | ✅     |
-| 10  | **Method Overriding**                     | hitungDenda(), getTipe() di tiap subclass                                     | ✅     |
-| 11  | **Method Overloading**                    | Constructor overload, overloaded method                                       | ✅     |
-| 12  | **Polymorphism (Inclusion)**              | List<ItemPerpustakaan> menyimpan semua subclass                               | ✅     |
-| 13  | **Generic Class**                         | Repository<T>                                                                 | ✅     |
-| 14  | **Bounded Generic**                       | Repository<T extends Identifiable>                                            | ✅     |
-| 15  | **Generic Method**                        | find(Predicate<T>)                                                            | ✅     |
-| 16  | **Collection (ArrayList)**                | ArrayList<T> di Repository, List processing                                   | ✅     |
-| 17  | **Exception Handling**                    | Try-catch di service, throws declaration                                      | ✅     |
-| 18  | **Custom Exception**                      | 4 kelas exception khusus (semua di-throw di PerpustakaanService)              | ✅     |
-| 19  | **Association**                           | Peminjangan → Anggota (via ID)                                                | ✅     |
-| 20  | **Composition**                           | Peminjaman berisi reference ke ItemPerpustakaan                               | ✅     |
-| 21  | **Aggregation**                           | PerpustakaanService mengelola Repository                                      | ✅     |
-| 22  | **Dependency**                            | UI layer bergantung pada Service layer                                        | ✅     |
-| 23  | **super Keyword**                         | Constructor chaining di subclass                                              | ✅     |
-| 24  | **this Keyword**                          | Resolve shadowing, constructor chaining                                       | ✅     |
-| 25  | **Final Variable**                        | MAX_PINJAM = 3                                                                | ✅     |
-| 26  | **Static Variable**                       | MAX_PINJAM, instance PerpustakaanService                                      | ✅     |
-| 27  | **Static Method**                         | getInstance() singleton                                                       | ✅     |
-| 28  | **Singleton Pattern**                     | PerpustakaanService (private constructor + synchronized getInstance)          | ✅     |
-| 29  | **Enum**                                  | StatusPeminjaman (DIPINJAM, DIKEMBALIKAN, TERLAMBAT)                         | ✅     |
-| 30  | **Persistent Object**                     | Save/load JSON via Gson + RuntimeTypeAdapterFactory                           | ✅     |
-| 31  | **Instance vs Class Member**              | Instance: id, nama; Class: MAX_PINJAM, instance Singleton                     | ✅     |
-| 32  | **Message Passing**                       | Main → Service → Repository                                                   | ✅     |
+| #   | Konsep                                    | Implementasi                                                         | Status |
+| --- | ----------------------------------------- | -------------------------------------------------------------------- | ------ |
+| 1   | **Class & Object**                        | Semua model class                                                    | ✅     |
+| 2   | **Constructor (default & parameterized)** | Semua model class                                                    | ✅     |
+| 3   | **Constructor Overloading**               | ItemPerpustakaan, Anggota                                            | ✅     |
+| 4   | **Enkapsulasi**                           | Private fields + public getter/setter                                | ✅     |
+| 5   | **Inheritance (Single & Hierarchical)**   | BukuFisik, Digital, Jurnal ← ItemPerpustakaan                        | ✅     |
+| 6   | **Abstract Class**                        | ItemPerpustakaan                                                     | ✅     |
+| 7   | **Abstract Method**                       | hitungDenda(), getTipe()                                             | ✅     |
+| 8   | **Interface**                             | Identifiable, IBorrowable, ISearchable                               | ✅     |
+| 9   | **Implements Multiple Interface**         | ItemPerpustakaan implements Identifiable, IBorrowable, ISearchable   | ✅     |
+| 10  | **Method Overriding**                     | hitungDenda(), getTipe() di tiap subclass                            | ✅     |
+| 11  | **Method Overloading**                    | Constructor overload, overloaded method                              | ✅     |
+| 12  | **Polymorphism (Inclusion)**              | List<ItemPerpustakaan> menyimpan semua subclass                      | ✅     |
+| 13  | **Generic Class**                         | Repository<T>                                                        | ✅     |
+| 14  | **Bounded Generic**                       | Repository<T extends Identifiable>                                   | ✅     |
+| 15  | **Generic Method**                        | find(Predicate<T>)                                                   | ✅     |
+| 16  | **Collection (ArrayList)**                | ArrayList<T> di Repository, List processing                          | ✅     |
+| 17  | **Exception Handling**                    | Try-catch di service, throws declaration                             | ✅     |
+| 18  | **Custom Exception**                      | 4 kelas exception khusus (semua di-throw di PerpustakaanService)     | ✅     |
+| 19  | **Association**                           | Peminjangan → Anggota (via ID)                                       | ✅     |
+| 20  | **Composition**                           | Peminjaman berisi reference ke ItemPerpustakaan                      | ✅     |
+| 21  | **Aggregation**                           | PerpustakaanService mengelola Repository                             | ✅     |
+| 22  | **Dependency**                            | UI layer bergantung pada Service layer                               | ✅     |
+| 23  | **super Keyword**                         | Constructor chaining di subclass                                     | ✅     |
+| 24  | **this Keyword**                          | Resolve shadowing, constructor chaining                              | ✅     |
+| 25  | **Final Variable**                        | MAX_PINJAM = 3                                                       | ✅     |
+| 26  | **Static Variable**                       | MAX_PINJAM, instance PerpustakaanService                             | ✅     |
+| 27  | **Static Method**                         | getInstance() singleton                                              | ✅     |
+| 28  | **Singleton Pattern**                     | PerpustakaanService (private constructor + synchronized getInstance) | ✅     |
+| 29  | **Enum**                                  | StatusPeminjaman (DIPINJAM, DIKEMBALIKAN, TERLAMBAT)                 | ✅     |
+| 30  | **Persistent Object**                     | Save/load JSON via Gson + RuntimeTypeAdapterFactory                  | ✅     |
+| 31  | **Instance vs Class Member**              | Instance: id, nama; Class: MAX_PINJAM, instance Singleton            | ✅     |
+| 32  | **Message Passing**                       | Main → Service → Repository                                          | ✅     |
 
 **Total: 32 konsep OOP**
 
@@ -566,13 +569,13 @@ classDiagram
 
 ## 8. Timeline / Milestone
 
-| Fase                              | Task                                                        | Target       | Status    |
-| --------------------------------- | ----------------------------------------------------------- | ------------ | --------- |
-| **Fase 1: Setup & Model**         | Struktur folder, model classes, interfaces, enum, exception | Hari 1-2     | ✅ Selesai |
-| **Fase 2: Generic & Persistence** | Repository<T>, Gson setup, save/load JSON                   | Hari 3-4     | ✅ Selesai |
-| **Fase 3: Service & Logic**       | PerpustakaanService (Singleton), AuthService, business logic| Hari 5-6     | ✅ Selesai |
-| **Fase 4: UI**                    | MenuManager, MenuAdmin, MenuAnggota, Main                   | Hari 7-8     | ✅ Selesai |
-| **Fase 5: Finalisasi**            | README, UML Mermaid, final PLAN.md, GitHub push             | Hari 9-10    | 🔜 Proses |
+| Fase                              | Task                                                         | Target    | Status     |
+| --------------------------------- | ------------------------------------------------------------ | --------- | ---------- |
+| **Fase 1: Setup & Model**         | Struktur folder, model classes, interfaces, enum, exception  | Hari 1-2  | ✅ Selesai |
+| **Fase 2: Generic & Persistence** | Repository<T>, Gson setup, save/load JSON                    | Hari 3-4  | ✅ Selesai |
+| **Fase 3: Service & Logic**       | PerpustakaanService (Singleton), AuthService, business logic | Hari 5-6  | ✅ Selesai |
+| **Fase 4: UI**                    | MenuManager, MenuAdmin, MenuAnggota, Main                    | Hari 7-8  | ✅ Selesai |
+| **Fase 5: Finalisasi**            | README, UML Mermaid, final PLAN.md, GitHub push              | Hari 9-10 | 🔜 Proses  |
 
 ---
 

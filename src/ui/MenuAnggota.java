@@ -190,6 +190,25 @@ public class MenuAnggota extends MenuManager {
 
         String idPeminjaman = bacaInput("ID Peminjaman");
 
+        // Validasi ownership: cek dulu peminjaman milik siapa
+        Anggota anggota = service.getCurrentAnggota();
+        List<Peminjaman> semua = service.getAllPeminjaman();
+        Peminjaman target = null;
+        for (Peminjaman p : semua) {
+            if (p.getId().equals(idPeminjaman)) {
+                target = p;
+                break;
+            }
+        }
+        if (target == null) {
+            cetakError("Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
+            return;
+        }
+        if (!target.getIdAnggota().equals(anggota.getId())) {
+            cetakError("Peminjaman #" + idPeminjaman + " bukan milik Anda.");
+            return;
+        }
+
         try {
             service.perpanjangPeminjaman(idPeminjaman);
             cetakSukses("Peminjaman #" + idPeminjaman + " diperpanjang 3 hari.");

@@ -1,17 +1,14 @@
 package util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 /**
  * Singleton untuk memuat konfigurasi dari file config.properties.
- * Menerapkan Singleton Pattern.
- *
- * Fallback behavior:
- * - Jika config.properties ditemukan di root project, baca dari situ
- * - Jika tidak, gunakan default hardcoded (sebagai safe fallback)
+ * Jika file tidak ditemukan, aplikasi akan terminasi dengan error.
+ * Copy config.properties.example menjadi config.properties untuk memulai.
  */
 public class Config {
 
@@ -39,8 +36,10 @@ public class Config {
         }
 
         if (!loaded) {
-            System.err.println("Config: config.properties tidak ditemukan. Menggunakan default.");
-            setDefaults();
+            System.err.println("FATAL: config.properties tidak ditemukan!");
+            System.err.println("Copy config.properties.example menjadi config.properties");
+            System.err.println("dan sesuaikan nilainya sebelum menjalankan aplikasi.");
+            System.exit(1);
         }
     }
 
@@ -53,12 +52,6 @@ public class Config {
             instance = new Config();
         }
         return instance;
-    }
-
-    /** Set nilai default (fallback jika file tidak ada) */
-    private void setDefaults() {
-        props.setProperty("admin.username", "admin");
-        props.setProperty("admin.password", "admin123");
     }
 
     /** Mendapatkan username admin dari konfigurasi */

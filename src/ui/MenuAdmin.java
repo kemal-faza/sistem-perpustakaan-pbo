@@ -71,8 +71,8 @@ public class MenuAdmin extends MenuManager {
         tampilkanHeader("TAMBAH BUKU");
 
         String id = service.generateIdBuku();
-        String judul = bacaInput("Judul");
-        int tahun = bacaInt("Tahun Terbit");
+        String judul = bacaInputWajib("Judul");
+        int tahun = bacaIntPositif("Tahun Terbit");
         String kategori = bacaInput("Kategori");
         String penerbit = bacaInput("Penerbit");
 
@@ -82,7 +82,7 @@ public class MenuAdmin extends MenuManager {
         ItemPerpustakaan item;
         switch (tipe) {
             case 1 -> {
-                int halaman = bacaInt("Jumlah Halaman");
+                int halaman = bacaIntPositif("Jumlah Halaman");
                 String rak = bacaInput("Lokasi Rak");
                 item = new BukuFisik(id, judul, tahun, kategori, penerbit, halaman, rak);
             }
@@ -92,8 +92,8 @@ public class MenuAdmin extends MenuManager {
                 item = new BukuDigital(id, judul, tahun, kategori, penerbit, ukuran, format);
             }
             case 3 -> {
-                int volume = bacaInt("Volume");
-                int nomor = bacaInt("Nomor");
+                int volume = bacaIntPositif("Volume");
+                int nomor = bacaIntPositif("Nomor");
                 String bidang = bacaInput("Bidang Ilmu");
                 item = new Jurnal(id, judul, tahun, kategori, penerbit, volume, nomor, bidang);
             }
@@ -139,12 +139,54 @@ public class MenuAdmin extends MenuManager {
         String penerbit = bacaInput("Penerbit baru");
         if (!penerbit.isEmpty()) item.setPenerbit(penerbit);
 
+        // Edit field spesifik per tipe
         if (item instanceof BukuFisik bukuFisik) {
+            String halamanStr = bacaInput("Jumlah Halaman baru");
+            if (!halamanStr.isEmpty()) {
+                try {
+                    int h = Integer.parseInt(halamanStr);
+                    if (h > 0) bukuFisik.setJumlahHalaman(h);
+                    else cetakError("Jumlah halaman harus positif.");
+                } catch (NumberFormatException e) {
+                    cetakError("Halaman tidak valid.");
+                }
+            }
             String rak = bacaInput("Lokasi Rak baru");
             if (!rak.isEmpty()) bukuFisik.setLokasiRak(rak);
         } else if (item instanceof BukuDigital bukuDigital) {
+            String ukuranStr = bacaInput("Ukuran File baru (MB)");
+            if (!ukuranStr.isEmpty()) {
+                try {
+                    bukuDigital.setUkuranFile(Double.parseDouble(ukuranStr));
+                } catch (NumberFormatException e) {
+                    cetakError("Ukuran file tidak valid.");
+                }
+            }
             String format = bacaInput("Format baru");
             if (!format.isEmpty()) bukuDigital.setFormat(format);
+        } else if (item instanceof Jurnal jurnal) {
+            String volStr = bacaInput("Volume baru");
+            if (!volStr.isEmpty()) {
+                try {
+                    int v = Integer.parseInt(volStr);
+                    if (v > 0) jurnal.setVolume(v);
+                    else cetakError("Volume harus positif.");
+                } catch (NumberFormatException e) {
+                    cetakError("Volume tidak valid.");
+                }
+            }
+            String nomorStr = bacaInput("Nomor baru");
+            if (!nomorStr.isEmpty()) {
+                try {
+                    int n = Integer.parseInt(nomorStr);
+                    if (n > 0) jurnal.setNomor(n);
+                    else cetakError("Nomor harus positif.");
+                } catch (NumberFormatException e) {
+                    cetakError("Nomor tidak valid.");
+                }
+            }
+            String bidang = bacaInput("Bidang Ilmu baru");
+            if (!bidang.isEmpty()) jurnal.setBidang(bidang);
         }
 
         // Objek sudah diupdate in-memory via reference, cukup simpan ke file
@@ -204,7 +246,7 @@ public class MenuAdmin extends MenuManager {
         tampilkanHeader("TAMBAH ANGGOTA");
 
         String id = service.generateIdAnggota();
-        String nama = bacaInput("Nama Lengkap");
+        String nama = bacaInputWajib("Nama Lengkap");
         String email = bacaInput("Email");
         String telepon = bacaInput("Telepon");
 

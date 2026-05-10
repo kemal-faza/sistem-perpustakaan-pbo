@@ -85,15 +85,21 @@ public class Peminjaman implements Identifiable {
     /** Memperpanjang masa pinjam (3 hari) */
     public void perpanjang() {
         if (status != StatusPeminjaman.DIPINJAM) {
-            System.out.println("Peminjaman sudah selesai, tidak bisa diperpanjang.");
-            return;
+            throw new IllegalStateException(
+                "Peminjaman #" + idPeminjaman + " sudah selesai, tidak bisa diperpanjang.");
         }
         this.tanggalKembali = this.tanggalKembali.plusDays(3);
-        System.out.println("Peminjaman diperpanjang. Batas kembali: " + tanggalKembali);
     }
 
-    /** Mengembalikan item (menutup transaksi peminjaman) */
-    public void kembalikan() {
+    /**
+     * Mengembalikan item (menutup transaksi peminjaman).
+     * @return jumlah hari terlambat (0 jika tepat waktu)
+     */
+    public int kembalikan() {
+        if (tanggalDikembalikan != null) {
+            throw new IllegalStateException(
+                "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
+        }
         this.tanggalDikembalikan = LocalDate.now();
         int hariTerlambat = hitungHariTerlambat();
         if (hariTerlambat > 0) {
@@ -101,6 +107,7 @@ public class Peminjaman implements Identifiable {
         } else {
             this.status = StatusPeminjaman.DIKEMBALIKAN;
         }
+        return hariTerlambat;
     }
 
     @Override

@@ -47,9 +47,12 @@ public class PerpustakaanService {
     @SuppressWarnings("unchecked")
     private PerpustakaanService() {
         // TypeToken untuk generic List (Gson membutuhkan ini karena type erasure)
-        Type bukuType = new TypeToken<ArrayList<ItemPerpustakaan>>(){}.getType();
-        Type anggotaType = new TypeToken<ArrayList<Anggota>>(){}.getType();
-        Type peminjamanType = new TypeToken<ArrayList<Peminjaman>>(){}.getType();
+        Type bukuType = new TypeToken<ArrayList<ItemPerpustakaan>>() {
+        }.getType();
+        Type anggotaType = new TypeToken<ArrayList<Anggota>>() {
+        }.getType();
+        Type peminjamanType = new TypeToken<ArrayList<Peminjaman>>() {
+        }.getType();
 
         this.repoBuku = new Repository<>(FILE_BUKU, bukuType);
         this.repoAnggota = new Repository<>(FILE_ANGGOTA, anggotaType);
@@ -74,6 +77,7 @@ public class PerpustakaanService {
 
     /**
      * Login sebagai admin.
+     * 
      * @param username username admin
      * @param password password admin
      * @return true jika login berhasil
@@ -89,6 +93,7 @@ public class PerpustakaanService {
 
     /**
      * Login sebagai anggota.
+     * 
      * @param idAnggota ID anggota
      * @return true jika login berhasil
      * @throws AnggotaTidakValidException jika ID tidak ditemukan
@@ -108,6 +113,7 @@ public class PerpustakaanService {
 
     /**
      * Mendapatkan user yang sedang login.
+     * 
      * @return Admin atau Anggota, null jika belum login
      */
     public Object getCurrentUser() {
@@ -130,6 +136,7 @@ public class PerpustakaanService {
 
     /**
      * Mendapatkan anggota yang sedang login.
+     * 
      * @return Anggota saat ini, null jika admin atau belum login
      */
     public Anggota getCurrentAnggota() {
@@ -140,6 +147,7 @@ public class PerpustakaanService {
 
     /**
      * Menambahkan item baru ke perpustakaan.
+     * 
      * @param item item yang akan ditambahkan
      */
     public void tambahBuku(ItemPerpustakaan item) {
@@ -149,6 +157,7 @@ public class PerpustakaanService {
 
     /**
      * Menghapus item dari perpustakaan berdasarkan ID.
+     * 
      * @param idBuku ID item yang akan dihapus
      * @throws BukuTidakDitemukanException jika ID tidak ditemukan
      */
@@ -156,7 +165,7 @@ public class PerpustakaanService {
         ItemPerpustakaan item = repoBuku.findById(idBuku);
         if (item == null) {
             throw new BukuTidakDitemukanException(
-                "Item dengan ID '" + idBuku + "' tidak ditemukan.");
+                    "Item dengan ID '" + idBuku + "' tidak ditemukan.");
         }
         repoBuku.delete(idBuku);
         repoBuku.saveToJson();
@@ -165,6 +174,7 @@ public class PerpustakaanService {
     /**
      * Mencari item berdasarkan keyword.
      * Menggunakan method cocok() dari ISearchable.
+     * 
      * @param keyword kata kunci pencarian
      * @return list item yang cocok
      */
@@ -193,6 +203,7 @@ public class PerpustakaanService {
 
     /**
      * Mendapatkan item berdasarkan ID.
+     * 
      * @param idBuku ID item
      * @return item jika ditemukan, null jika tidak
      */
@@ -204,6 +215,7 @@ public class PerpustakaanService {
 
     /**
      * Mendaftarkan anggota baru.
+     * 
      * @param anggota objek anggota yang akan ditambahkan
      */
     public void tambahAnggota(Anggota anggota) {
@@ -220,6 +232,7 @@ public class PerpustakaanService {
 
     /**
      * Mencari anggota berdasarkan ID.
+     * 
      * @param idAnggota ID anggota
      * @return anggota jika ditemukan, null jika tidak
      */
@@ -232,42 +245,42 @@ public class PerpustakaanService {
     /**
      * Memproses peminjaman item oleh anggota.
      *
-     * @param idBuku ID item yang akan dipinjam
+     * @param idBuku    ID item yang akan dipinjam
      * @param idAnggota ID anggota yang meminjam
-     * @throws BukuTidakDitemukanException jika item tidak ditemukan
-     * @throws AnggotaTidakValidException jika anggota tidak ditemukan
-     * @throws BukuTidakTersediaException jika item sedang dipinjam
+     * @throws BukuTidakDitemukanException      jika item tidak ditemukan
+     * @throws AnggotaTidakValidException       jika anggota tidak ditemukan
+     * @throws BukuTidakTersediaException       jika item sedang dipinjam
      * @throws PeminjamanMelebihiBatasException jika anggota sudah max pinjam
      */
     public void pinjamBuku(String idBuku, String idAnggota)
             throws BukuTidakDitemukanException, AnggotaTidakValidException,
-                   BukuTidakTersediaException, PeminjamanMelebihiBatasException {
+            BukuTidakTersediaException, PeminjamanMelebihiBatasException {
 
         // Validasi: cari item
         ItemPerpustakaan item = repoBuku.findById(idBuku);
         if (item == null) {
             throw new BukuTidakDitemukanException(
-                "Item dengan ID '" + idBuku + "' tidak ditemukan.");
+                    "Item dengan ID '" + idBuku + "' tidak ditemukan.");
         }
 
         // Validasi: cari anggota
         Anggota anggota = repoAnggota.findById(idAnggota);
         if (anggota == null) {
             throw new AnggotaTidakValidException(
-                "Anggota dengan ID '" + idAnggota + "' tidak ditemukan.");
+                    "Anggota dengan ID '" + idAnggota + "' tidak ditemukan.");
         }
 
         // Validasi: ketersediaan item
         if (!item.isTersedia()) {
             throw new BukuTidakTersediaException(
-                "Item '" + item.getJudul() + "' sedang dipinjam orang lain.");
+                    "Item '" + item.getJudul() + "' sedang dipinjam orang lain.");
         }
 
         // Validasi: batas pinjam anggota
         if (!anggota.bisaPinjam()) {
             throw new PeminjamanMelebihiBatasException(
-                "Anggota '" + anggota.getNama() + "' sudah mencapai batas pinjam ("
-                + Anggota.MAX_PINJAM + ").");
+                    "Anggota '" + anggota.getNama() + "' sudah mencapai batas pinjam ("
+                            + Anggota.MAX_PINJAM + ").");
         }
 
         // Generate ID peminjaman
@@ -277,10 +290,10 @@ public class PerpustakaanService {
         LocalDate tanggalPinjam = LocalDate.now();
         LocalDate tanggalKembali = tanggalPinjam.plusDays(7);
         Peminjaman peminjaman = new Peminjaman(idPeminjaman, idAnggota, idBuku,
-                                                tanggalPinjam, tanggalKembali);
+                tanggalPinjam, tanggalKembali);
 
         // Update state objek terkait
-        item.pinjam();            // set tersedia = false
+        item.pinjam(); // set tersedia = false
         anggota.tambahPinjaman(); // increment pinjamanAktif
 
         // Simpan
@@ -295,34 +308,41 @@ public class PerpustakaanService {
      *
      * @param idPeminjaman ID transaksi peminjaman
      * @throws BukuTidakDitemukanException jika item terkait tidak ditemukan
-     * @throws AnggotaTidakValidException jika anggota terkait tidak ditemukan
+     * @throws AnggotaTidakValidException  jika anggota terkait tidak ditemukan
+     * @throws IllegalStateException       jika peminjaman sudah dikembalikan
      */
     public void kembalikanBuku(String idPeminjaman)
-            throws BukuTidakDitemukanException, AnggotaTidakValidException {
+            throws BukuTidakDitemukanException, AnggotaTidakValidException, IllegalStateException {
 
         // Cari peminjaman
         Peminjaman peminjaman = repoPeminjaman.findById(idPeminjaman);
         if (peminjaman == null) {
             throw new BukuTidakDitemukanException(
-                "Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
+                    "Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
+        }
+
+        // Idempotency guard: cek apakah peminjaman sudah selesai
+        if (peminjaman.getStatus() != StatusPeminjaman.DIPINJAM) {
+            throw new IllegalStateException(
+                "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
         }
 
         // Cari item terkait
         ItemPerpustakaan item = repoBuku.findById(peminjaman.getIdItem());
         if (item == null) {
             throw new BukuTidakDitemukanException(
-                "Item terkait dengan ID '" + peminjaman.getIdItem() + "' tidak ditemukan.");
+                    "Item terkait dengan ID '" + peminjaman.getIdItem() + "' tidak ditemukan.");
         }
 
         // Cari anggota terkait
         Anggota anggota = repoAnggota.findById(peminjaman.getIdAnggota());
         if (anggota == null) {
             throw new AnggotaTidakValidException(
-                "Anggota terkait dengan ID '" + peminjaman.getIdAnggota() + "' tidak ditemukan.");
+                    "Anggota terkait dengan ID '" + peminjaman.getIdAnggota() + "' tidak ditemukan.");
         }
 
-        // Proses pengembalian di model Peminjaman (set status, tanggal)
-        peminjaman.kembalikan();
+        // Proses pengembalian di model Peminjaman — return hariTerlambat
+        int hariTerlambat = peminjaman.kembalikan();
 
         // Kembalikan item (set tersedia = true)
         item.kembalikan();
@@ -331,7 +351,6 @@ public class PerpustakaanService {
         anggota.kurangiPinjaman();
 
         // Hitung denda
-        int hariTerlambat = peminjaman.hitungHariTerlambat();
         if (hariTerlambat > 0) {
             double denda = item.hitungDenda(hariTerlambat);
             peminjaman.setDenda(denda);
@@ -345,20 +364,31 @@ public class PerpustakaanService {
 
     /**
      * Memperpanjang masa peminjaman (3 hari).
+     *
      * @param idPeminjaman ID peminjaman yang akan diperpanjang
+     * @throws BukuTidakDitemukanException jika ID peminjaman tidak ditemukan
+     * @throws IllegalStateException       jika peminjaman sudah selesai
      */
-    public void perpanjangPeminjaman(String idPeminjaman) {
+    public void perpanjangPeminjaman(String idPeminjaman)
+            throws BukuTidakDitemukanException, IllegalStateException {
         Peminjaman peminjaman = repoPeminjaman.findById(idPeminjaman);
         if (peminjaman == null) {
-            System.out.println("Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
-            return;
+            throw new BukuTidakDitemukanException(
+                "Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
         }
+
+        if (peminjaman.getStatus() != StatusPeminjaman.DIPINJAM) {
+            throw new IllegalStateException(
+                "Peminjaman #" + idPeminjaman + " sudah selesai, tidak bisa diperpanjang.");
+        }
+
         peminjaman.perpanjang();
         repoPeminjaman.saveToJson();
     }
 
     /**
      * Mendapatkan riwayat peminjaman seorang anggota.
+     * 
      * @param idAnggota ID anggota
      * @return list peminjaman yang dilakukan anggota tersebut
      */
@@ -412,17 +442,18 @@ public class PerpustakaanService {
      * Memuat contoh buku, anggota, dan peminjaman untuk demo.
      */
     public void loadSampleData() {
-        if (sampleLoaded) return;
+        if (sampleLoaded)
+            return;
 
         if (repoBuku.size() == 0) {
             repoBuku.add(new BukuFisik("B001", "Pemrograman Berorientasi Objek", 2024,
-                "Teknologi", "Informatika", 350, "A1-01"));
+                    "Teknologi", "Informatika", 350, "A1-01"));
             repoBuku.add(new BukuFisik("B002", "Struktur Data dan Algoritma", 2023,
-                "Teknologi", "Andi Publisher", 420, "A1-02"));
+                    "Teknologi", "Andi Publisher", 420, "A1-02"));
             repoBuku.add(new BukuDigital("B003", "Belajar Java dalam Sehari", 2024,
-                "Teknologi", "E-Book Publisher", 5.2, "PDF"));
+                    "Teknologi", "E-Book Publisher", 5.2, "PDF"));
             repoBuku.add(new Jurnal("B004", "Jurnal Informatika Undip", 2024,
-                "Ilmiah", "Universitas Diponegoro", 12, 1, "Ilmu Komputer"));
+                    "Ilmiah", "Universitas Diponegoro", 12, 1, "Ilmu Komputer"));
             repoBuku.saveToJson();
         }
 

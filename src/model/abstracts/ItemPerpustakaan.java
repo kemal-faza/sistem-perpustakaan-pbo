@@ -65,26 +65,23 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     @Override
     public void pinjam() {
         if (!tersedia) {
-            System.out.println("Item '" + judul + "' sedang tidak tersedia.");
-            return;
+            throw new IllegalStateException(
+                "Item '" + judul + "' sedang tidak tersedia.");
         }
         this.tersedia = false;
-        System.out.println("Item '" + judul + "' berhasil dipinjam.");
     }
 
     @Override
     public void kembalikan() {
         this.tersedia = true;
-        System.out.println("Item '" + judul + "' berhasil dikembalikan.");
     }
 
     @Override
     public void perpanjang() {
         if (tersedia) {
-            System.out.println("Item '" + judul + "' sedang tidak dipinjam.");
-            return;
+            throw new IllegalStateException(
+                "Item '" + judul + "' sedang tidak dipinjam.");
         }
-        System.out.println("Masa pinjam item '" + judul + "' diperpanjang.");
     }
 
     @Override

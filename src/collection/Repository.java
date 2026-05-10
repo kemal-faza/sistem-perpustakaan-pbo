@@ -137,7 +137,7 @@ public class Repository<T extends Identifiable> {
             return;
         }
 
-        Gson gson = createGson().create();
+        com.google.gson.Gson gson = createGson().create();
         try (Reader reader = new FileReader(file)) {
             items = gson.fromJson(reader, typeToken);
             if (items == null) {
@@ -145,6 +145,10 @@ public class Repository<T extends Identifiable> {
             }
         } catch (IOException e) {
             System.err.println("Gagal memuat dari " + filePath + ": " + e.getMessage());
+            items = new ArrayList<>();
+        } catch (com.google.gson.JsonParseException e) {
+            System.err.println("Format JSON tidak valid di " + filePath
+                + ". Data akan di-reset. (" + e.getMessage() + ")");
             items = new ArrayList<>();
         }
     }
@@ -156,8 +160,8 @@ public class Repository<T extends Identifiable> {
     private GsonBuilder createGson() {
         RuntimeTypeAdapterFactory<ItemPerpustakaan> typeFactory =
             RuntimeTypeAdapterFactory.of(ItemPerpustakaan.class, "type")
-                .registerSubtype(BukuFisik.class, "BukuFisik")
-                .registerSubtype(BukuDigital.class, "BukuDigital")
+                .registerSubtype(BukuFisik.class, "Buku Fisik")
+                .registerSubtype(BukuDigital.class, "Buku Digital")
                 .registerSubtype(Jurnal.class, "Jurnal");
 
         return new GsonBuilder()

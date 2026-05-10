@@ -55,16 +55,20 @@ perpustakaan-pbo/
 │   ├── service/
 │   │   ├── PerpustakaanService.java       # Business logic utama
 │   │   └── AuthService.java               # Autentikasi
-│   └── ui/
-│       ├── MenuManager.java               # Base menu handler
-│       ├── MenuAdmin.java
-│       └── MenuAnggota.java
+│   ├── ui/
+│   │   ├── MenuManager.java               # Base menu handler
+│   │   ├── MenuAdmin.java
+│   │   └── MenuAnggota.java
+│   └── util/
+│       └── Config.java                    # Loader config.properties (Singleton)
 ├── data/
 │   ├── buku.json
 │   ├── anggota.json
 │   └── peminjaman.json
 ├── lib/
 │   └── gson-2.10.1.jar                    # Library Gson (manual include)
+├── config.properties                      # Konfigurasi (tidak di-commit)
+├── config.properties.example              # Template konfigurasi (di-commit)
 └── README.md
 ```
 

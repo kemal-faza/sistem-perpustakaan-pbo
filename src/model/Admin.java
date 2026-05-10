@@ -1,6 +1,7 @@
 package model;
 
 import interfaces.Identifiable;
+import util.Config;
 
 /**
  * Kelas untuk merepresentasikan admin perpustakaan.
@@ -8,18 +9,16 @@ import interfaces.Identifiable;
  */
 public class Admin implements Identifiable {
 
-    /** Username default untuk admin */
-    private static final String DEFAULT_USERNAME = "admin";
-
     private String id;
     private String username;
     private String password;
 
-    /** Constructor default dengan kredensial default */
+    /** Constructor default — membaca credential dari Config */
     public Admin() {
         this.id = "ADM001";
-        this.username = DEFAULT_USERNAME;
-        this.password = "admin123";
+        Config config = Config.getInstance();
+        this.username = config.getAdminUsername();
+        this.password = config.getAdminPassword();
     }
 
     /** Constructor dengan parameter */

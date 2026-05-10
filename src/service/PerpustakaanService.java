@@ -451,8 +451,9 @@ public class PerpustakaanService {
      * Memuat contoh buku, anggota, dan peminjaman untuk demo.
      */
     public void loadSampleData() {
-        if (sampleLoaded)
-            return;
+        if (sampleLoaded) return;
+
+        boolean dataDitambahkan = false;
 
         if (repoBuku.size() == 0) {
             repoBuku.add(new BukuFisik("B001", "Pemrograman Berorientasi Objek", 2024,
@@ -464,6 +465,7 @@ public class PerpustakaanService {
             repoBuku.add(new Jurnal("B004", "Jurnal Informatika Undip", 2024,
                     "Ilmiah", "Universitas Diponegoro", 12, 1, "Ilmu Komputer"));
             repoBuku.saveToJson();
+            dataDitambahkan = true;
         }
 
         if (repoAnggota.size() == 0) {
@@ -471,9 +473,13 @@ public class PerpustakaanService {
             repoAnggota.add(new Anggota("A002", "Siti Rahayu", "siti@email.com", "08198765432"));
             repoAnggota.add(new Anggota("A003", "Ahmad Fauzi", "ahmad@email.com", "08567891234"));
             repoAnggota.saveToJson();
+            dataDitambahkan = true;
         }
 
         sampleLoaded = true;
-        System.out.println("Data sample berhasil dimuat.");
+
+        if (dataDitambahkan) {
+            System.out.println("Data sample berhasil dimuat.");
+        }
     }
 }

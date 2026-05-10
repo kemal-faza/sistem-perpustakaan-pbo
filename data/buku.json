@@ -1,0 +1,47 @@
+[
+  {
+    "jumlahHalaman": 350,
+    "lokasiRak": "A1-01",
+    "type": "Buku Fisik",
+    "id": "B001",
+    "judul": "Pemrograman Berorientasi Objek",
+    "tahunTerbit": 2024,
+    "kategori": "Teknologi",
+    "tersedia": true,
+    "penerbit": "Informatika"
+  },
+  {
+    "jumlahHalaman": 420,
+    "lokasiRak": "A1-02",
+    "type": "Buku Fisik",
+    "id": "B002",
+    "judul": "Struktur Data dan Algoritma",
+    "tahunTerbit": 2023,
+    "kategori": "Teknologi",
+    "tersedia": true,
+    "penerbit": "Andi Publisher"
+  },
+  {
+    "ukuranFile": 5.2,
+    "format": "PDF",
+    "type": "Buku Digital",
+    "id": "B003",
+    "judul": "Belajar Java dalam Sehari",
+    "tahunTerbit": 2024,
+    "kategori": "Teknologi",
+    "tersedia": true,
+    "penerbit": "E-Book Publisher"
+  },
+  {
+    "volume": 12,
+    "nomor": 1,
+    "bidang": "Ilmu Komputer",
+    "type": "Jurnal",
+    "id": "B004",
+    "judul": "Jurnal Informatika Undip",
+    "tahunTerbit": 2024,
+    "kategori": "Ilmiah",
+    "tersedia": true,
+    "penerbit": "Universitas Diponegoro"
+  }
+]

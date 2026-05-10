@@ -1,0 +1,4 @@
+# Konfigurasi Sistem Perpustakaan PBO
+# Copy file ini menjadi config.properties dan sesuaikan nilainya
+admin.username=admin
+admin.password=CHANGE_ME

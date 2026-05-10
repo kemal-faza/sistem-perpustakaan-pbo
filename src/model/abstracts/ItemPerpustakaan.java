@@ -11,6 +11,7 @@ import interfaces.Identifiable;
 public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISearchable {
 
     // === Atribut dengan Enkapsulasi (private) ===
+    private String type;     // Discriminator untuk JSON deserialization
     private String id;
     private String judul;
     private int tahunTerbit;
@@ -23,6 +24,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     /** Constructor default */
     public ItemPerpustakaan() {
         this.tersedia = true;
+        this.type = getTipe();  // set discriminator dari abstract method
     }
 
     /** Constructor dengan parameter */
@@ -34,6 +36,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
         this.kategori = kategori;
         this.penerbit = penerbit;
         this.tersedia = true;
+        this.type = getTipe();  // set discriminator dari abstract method
     }
 
     // === Getter & Setter (Enkapsulasi) ===

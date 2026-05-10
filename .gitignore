@@ -4,3 +4,4 @@ out/
 *.iml
 .vscode/
 reference/
+config.properties

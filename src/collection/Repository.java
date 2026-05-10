@@ -3,8 +3,12 @@ package collection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+
+import java.time.LocalDate;
 
 import interfaces.Identifiable;
 import model.Kategori;
@@ -174,9 +178,17 @@ public class Repository<T extends Identifiable> {
             return Kategori.fromString(value);
         };
 
+        // TypeAdapter untuk LocalDate — bypass Java 17+ reflection restrictions
+        JsonSerializer<LocalDate> localDateSerializer =
+            (src, type, ctx) -> new JsonPrimitive(src.toString());
+        JsonDeserializer<LocalDate> localDateDeserializer =
+            (json, type, ctx) -> LocalDate.parse(json.getAsString());
+
         return new GsonBuilder()
             .registerTypeAdapterFactory(typeFactory)
-            .registerTypeAdapter(Kategori.class, kategoriDeserializer);
+            .registerTypeAdapter(Kategori.class, kategoriDeserializer)
+            .registerTypeAdapter(LocalDate.class, localDateSerializer)
+            .registerTypeAdapter(LocalDate.class, localDateDeserializer);
     }
 
     // === Utility ===

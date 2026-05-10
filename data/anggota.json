@@ -2,22 +2,16 @@
   {
     "id": "A001",
     "nama": "Budi Santoso",
-    "email": "budi@email.com",
-    "telepon": "08123456789",
     "pinjamanAktif": 0
   },
   {
     "id": "A002",
     "nama": "Siti Rahayu",
-    "email": "siti@email.com",
-    "telepon": "08198765432",
     "pinjamanAktif": 0
   },
   {
     "id": "A003",
     "nama": "Ahmad Fauzi",
-    "email": "ahmad@email.com",
-    "telepon": "08567891234",
     "pinjamanAktif": 0
   }
 ]

@@ -299,10 +299,8 @@ public class MenuAdmin extends MenuManager {
 
         String id = service.generateIdAnggota();
         String nama = bacaInputWajib("Nama Lengkap");
-        String email = bacaInput("Email");
-        String telepon = bacaInput("Telepon");
 
-        Anggota anggota = new Anggota(id, nama, email, telepon);
+        Anggota anggota = new Anggota(id, nama);
         service.tambahAnggota(anggota);
         cetakSukses("Anggota '" + nama + "' berhasil ditambahkan (ID: " + id + ").");
     }

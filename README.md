@@ -25,6 +25,47 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 
 ---
 
+## 📝 Format Input Data
+
+### Buku Fisik
+| Field | Tipe | Wajib? | Contoh |
+|-------|------|:------:|--------|
+| Judul | String | ✅ | "Pemrograman Berorientasi Objek" |
+| Tahun Terbit | Angka positif | ✅ | 2024 |
+| Kategori | Pilih dari menu (1-8) | ✅ | Teknologi, Ilmiah, Fiksi, ... |
+| Penulis | String | ✅ | "Rosa A.S." |
+| Penerbit | String | | "Informatika" |
+| Jumlah Halaman | Angka positif | ✅ | 350 |
+| Lokasi Rak | Format `[A]\d+-\d+` | ✅ | `A1-01`, `B2-15` |
+| Jumlah Stok | Angka positif | ✅ | 3 |
+
+### Buku Digital
+| Field | Tipe | Wajib? | Contoh |
+|-------|------|:------:|--------|
+| Judul | String | ✅ | "Belajar Java dalam Sehari" |
+| Tahun Terbit | Angka positif | ✅ | 2024 |
+| Kategori | Pilih dari menu | ✅ | Teknologi |
+| Penulis | String | ✅ | "Budi Raharjo" |
+| Penerbit | String | | "E-Book Publisher" |
+| Ukuran File | Angka desimal (MB) | ✅ | 5.2 |
+| Format | String | ✅ | PDF |
+
+### Jurnal
+| Field | Tipe | Wajib? | Contoh |
+|-------|------|:------:|--------|
+| ... | (sama: judul, tahun, kategori, penulis, penerbit) | | |
+| Volume | Angka positif | ✅ | 12 |
+| Nomor | Angka positif | ✅ | 1 |
+| Bidang Ilmu | String | | "Ilmu Komputer" |
+| Jumlah Stok | Angka positif | ✅ | 2 |
+
+### Format Lokasi Rak
+- **Pola:** `[Huruf Lantai][Nomor Rak]-[Slot]`
+- Contoh valid: `A1-01`, `B2-15`, `C3-100`
+- Contoh tidak valid: `a1` (huruf kecil), `A-1` (tanpa nomor rak), `deket pintu`
+
+---
+
 ## 🧩 UML Class Diagram
 
 ```mermaid
@@ -61,9 +102,11 @@ classDiagram
         - String id
         - String judul
         - int tahunTerbit
-        - String kategori
-        - boolean tersedia
+        - Kategori kategori
         - String penerbit
+        - String penulis
+        - int stok
+        - int dipinjam
         + hitungDenda(int)* double
         + getTipe()* String
     }
@@ -92,8 +135,6 @@ classDiagram
     class Anggota {
         - String id
         - String nama
-        - String email
-        - String telepon
         - int pinjamanAktif
         + bisaPinjam() boolean
         + tambahPinjaman() void
@@ -273,11 +314,11 @@ java -cp "out:lib/*" Main
 - **Password:** lihat `config.properties` (copy dari `config.properties.example` jika belum ada)
 
 ### Anggota (Sample Data)
-| ID | Nama |
-|:--:|------|
-| A001 | Budi Santoso |
-| A002 | Siti Rahayu |
-| A003 | Ahmad Fauzi |
+| ID | Nama | Pinjaman |
+|:--:|------|:--------:|
+| A001 | Budi Santoso | 0/3 |
+| A002 | Siti Rahayu | 0/3 |
+| A003 | Ahmad Fauzi | 0/3 |
 
 ---
 

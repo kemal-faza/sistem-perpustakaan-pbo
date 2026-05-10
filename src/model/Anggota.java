@@ -13,8 +13,6 @@ public class Anggota implements Identifiable {
 
     private String id;
     private String nama;
-    private String email;
-    private String telepon;
     private int pinjamanAktif;
 
     /** Constructor default */
@@ -23,11 +21,9 @@ public class Anggota implements Identifiable {
     }
 
     /** Constructor dengan parameter */
-    public Anggota(String id, String nama, String email, String telepon) {
+    public Anggota(String id, String nama) {
         this.id = id;
         this.nama = nama;
-        this.email = email;
-        this.telepon = telepon;
         this.pinjamanAktif = 0;
     }
 
@@ -37,12 +33,6 @@ public class Anggota implements Identifiable {
 
     public String getNama() { return nama; }
     public void setNama(String nama) { this.nama = nama; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getTelepon() { return telepon; }
-    public void setTelepon(String telepon) { this.telepon = telepon; }
 
     public int getPinjamanAktif() { return pinjamanAktif; }
     public void setPinjamanAktif(int pinjamanAktif) { this.pinjamanAktif = pinjamanAktif; }

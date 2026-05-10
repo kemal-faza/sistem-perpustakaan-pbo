@@ -1,0 +1,12 @@
+[
+  {
+    "idPeminjaman": "P001",
+    "idAnggota": "A001",
+    "idItem": "B001",
+    "tanggalPinjam": "2026-05-01",
+    "tanggalKembali": "2026-05-08",
+    "status": "DIPINJAM",
+    "denda": 0.0,
+    "jumlahPerpanjang": 0
+  }
+]

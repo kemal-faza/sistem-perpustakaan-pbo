@@ -506,9 +506,9 @@ public class PerpustakaanService {
         }
 
         if (repoAnggota.size() == 0) {
-            repoAnggota.add(new Anggota("A001", "Budi Santoso", "budi@email.com", "08123456789"));
-            repoAnggota.add(new Anggota("A002", "Siti Rahayu", "siti@email.com", "08198765432"));
-            repoAnggota.add(new Anggota("A003", "Ahmad Fauzi", "ahmad@email.com", "08567891234"));
+            repoAnggota.add(new Anggota("A001", "Budi Santoso"));
+            repoAnggota.add(new Anggota("A002", "Siti Rahayu"));
+            repoAnggota.add(new Anggota("A003", "Ahmad Fauzi"));
             repoAnggota.saveToJson();
             dataDitambahkan = true;
         }

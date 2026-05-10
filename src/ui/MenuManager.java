@@ -1,0 +1,78 @@
+package ui;
+
+import java.util.Scanner;
+
+/**
+ * Abstract base class untuk menu CLI.
+ * Menyediakan utility methods untuk input/output konsol.
+ */
+public abstract class MenuManager {
+
+    protected static final Scanner scanner = new Scanner(System.in);
+    protected static final String LINE = "===========================================";
+
+    /** Menampilkan header dengan judul */
+    public void tampilkanHeader(String judul) {
+        System.out.println("\n" + LINE);
+        System.out.println("  " + judul);
+        System.out.println(LINE);
+    }
+
+    /**
+     * Menampilkan menu dan membaca pilihan user.
+     * @param opsi daftar opsi menu (index 0 = judul, index 1..n = opsi)
+     * @return nomor opsi yang dipilih (1-based)
+     */
+    public int tampilkanMenu(String[] opsi) {
+        System.out.println();
+        for (int i = 1; i < opsi.length; i++) {
+            System.out.println("  " + i + ". " + opsi[i]);
+        }
+        System.out.println("  0. " + opsi[0]);
+        System.out.print("Pilih menu: ");
+        try {
+            return Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    /** Membaca input string dari user */
+    public String bacaInput(String prompt) {
+        System.out.print(prompt + ": ");
+        return scanner.nextLine().trim();
+    }
+
+    /** Membaca input integer dari user */
+    public int bacaInt(String prompt) {
+        while (true) {
+            System.out.print(prompt + ": ");
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("  [Error] Masukkan angka yang valid.");
+            }
+        }
+    }
+
+    /** Menunggu user menekan Enter */
+    public void tungguEnter() {
+        System.out.print("\nTekan Enter untuk melanjutkan...");
+        scanner.nextLine();
+    }
+
+    /** Cetak pesan sukses (hijau di terminal yang support) */
+    public void cetakSukses(String msg) {
+        System.out.println("  [OK] " + msg);
+    }
+
+    /** Cetak pesan error */
+    public void cetakError(String msg) {
+        System.out.println("  [Error] " + msg);
+    }
+
+    /** Cetak pesan informasi */
+    public void cetakInfo(String msg) {
+        System.out.println("  " + msg);
+    }
+}

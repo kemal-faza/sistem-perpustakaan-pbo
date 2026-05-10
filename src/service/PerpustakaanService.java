@@ -419,6 +419,15 @@ public class PerpustakaanService {
                 .sum();
     }
 
+    // ========== PERSISTENCE ==========
+
+    /** Menyimpan semua repository ke JSON */
+    public void simpanSemua() {
+        repoBuku.saveToJson();
+        repoAnggota.saveToJson();
+        repoPeminjaman.saveToJson();
+    }
+
     // ========== GENERATE ID ==========
 
     /**

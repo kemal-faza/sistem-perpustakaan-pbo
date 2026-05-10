@@ -8,8 +8,8 @@ import model.abstracts.ItemPerpustakaan;
  */
 public class BukuDigital extends ItemPerpustakaan {
 
-    private double ukuranFile;  // dalam MB
-    private String format;      // PDF, EPUB, dll
+    private double ukuranFile; // dalam MB
+    private String format; // PDF, EPUB, dll
 
     /** Constructor default */
     public BukuDigital() {
@@ -18,19 +18,29 @@ public class BukuDigital extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public BukuDigital(String id, String judul, int tahunTerbit,
-                       String kategori, String penerbit,
-                       double ukuranFile, String format) {
+            String kategori, String penerbit,
+            double ukuranFile, String format) {
         super(id, judul, tahunTerbit, kategori, penerbit);
         this.ukuranFile = ukuranFile;
         this.format = format;
     }
 
     // === Getter & Setter ===
-    public double getUkuranFile() { return ukuranFile; }
-    public void setUkuranFile(double ukuranFile) { this.ukuranFile = ukuranFile; }
+    public double getUkuranFile() {
+        return ukuranFile;
+    }
 
-    public String getFormat() { return format; }
-    public void setFormat(String format) { this.format = format; }
+    public void setUkuranFile(double ukuranFile) {
+        this.ukuranFile = ukuranFile;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
     /**
      * Menghitung denda keterlambatan untuk buku digital.

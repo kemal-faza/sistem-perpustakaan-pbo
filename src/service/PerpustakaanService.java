@@ -324,7 +324,7 @@ public class PerpustakaanService {
         // Idempotency guard: cek apakah peminjaman sudah selesai
         if (peminjaman.getStatus() != StatusPeminjaman.DIPINJAM) {
             throw new IllegalStateException(
-                "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
+                    "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
         }
 
         // Cari item terkait
@@ -374,12 +374,12 @@ public class PerpustakaanService {
         Peminjaman peminjaman = repoPeminjaman.findById(idPeminjaman);
         if (peminjaman == null) {
             throw new BukuTidakDitemukanException(
-                "Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
+                    "Peminjaman dengan ID '" + idPeminjaman + "' tidak ditemukan.");
         }
 
         if (peminjaman.getStatus() != StatusPeminjaman.DIPINJAM) {
             throw new IllegalStateException(
-                "Peminjaman #" + idPeminjaman + " sudah selesai, tidak bisa diperpanjang.");
+                    "Peminjaman #" + idPeminjaman + " sudah selesai, tidak bisa diperpanjang.");
         }
 
         peminjaman.perpanjang();

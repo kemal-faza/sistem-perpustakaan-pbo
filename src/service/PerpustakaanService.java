@@ -146,13 +146,27 @@ public class PerpustakaanService {
     // ========== MANAJEMEN BUKU ==========
 
     /**
-     * Menambahkan item baru ke perpustakaan.
-     * 
+     * Menambahkan item baru atau menambah stok item yang sudah ada.
+     * Jika judul + tipe sudah ada, stok ditambahkan. Jika belum, item baru dibuat.
+     *
      * @param item item yang akan ditambahkan
+     * @return "baru" jika item baru, "stok" jika hanya menambah stok item existing
      */
-    public void tambahBuku(ItemPerpustakaan item) {
+    public String tambahBuku(ItemPerpustakaan item) {
+        // Cek duplikasi: apakah judul + tipe sudah ada?
+        for (ItemPerpustakaan existing : repoBuku.getAll()) {
+            if (existing.getJudul().equalsIgnoreCase(item.getJudul())
+                    && existing.getTipe().equals(item.getTipe())) {
+                // Duplikat → tambah stok item existing
+                existing.setStok(existing.getStok() + item.getStok());
+                repoBuku.saveToJson();
+                return "stok";
+            }
+        }
+        // Beneran baru → add
         repoBuku.add(item);
         repoBuku.saveToJson();
+        return "baru";
     }
 
     /**
@@ -473,13 +487,13 @@ public class PerpustakaanService {
 
         if (repoBuku.size() == 0) {
             repoBuku.add(new BukuFisik("B001", "Pemrograman Berorientasi Objek", 2024,
-                    "Teknologi", "Informatika", 350, "A1-01"));
+                    Kategori.TEKNOLOGI, "Informatika", 350, "A1-01", 3));
             repoBuku.add(new BukuFisik("B002", "Struktur Data dan Algoritma", 2023,
-                    "Teknologi", "Andi Publisher", 420, "A1-02"));
+                    Kategori.TEKNOLOGI, "Andi Publisher", 420, "A1-02", 2));
             repoBuku.add(new BukuDigital("B003", "Belajar Java dalam Sehari", 2024,
-                    "Teknologi", "E-Book Publisher", 5.2, "PDF"));
+                    Kategori.TEKNOLOGI, "E-Book Publisher", 5.2, "PDF"));
             repoBuku.add(new Jurnal("B004", "Jurnal Informatika Undip", 2024,
-                    "Ilmiah", "Universitas Diponegoro", 12, 1, "Ilmu Komputer"));
+                    Kategori.ILMIAH, "Universitas Diponegoro", 12, 1, "Ilmu Komputer", 2));
             repoBuku.saveToJson();
             dataDitambahkan = true;
         }

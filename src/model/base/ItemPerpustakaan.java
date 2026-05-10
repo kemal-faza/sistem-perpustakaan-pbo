@@ -3,6 +3,7 @@ package model.base;
 import interfaces.IBorrowable;
 import interfaces.ISearchable;
 import interfaces.Identifiable;
+import model.Kategori;
 
 /**
  * Abstract class yang menjadi basis untuk semua item di perpustakaan.
@@ -15,28 +16,31 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     private String id;
     private String judul;
     private int tahunTerbit;
-    private String kategori;
-    private boolean tersedia;
+    private Kategori kategori;
     private String penerbit;
+    private int stok;
+    private int dipinjam;
 
     // === Constructor (Overloading) ===
 
-    /** Constructor default */
+    /** Constructor default — stok=1 untuk backward compat JSON */
     public ItemPerpustakaan() {
-        this.tersedia = true;
-        this.type = getTipe();  // set discriminator dari abstract method
+        this.stok = 1;
+        this.dipinjam = 0;
+        this.type = getTipe();
     }
 
     /** Constructor dengan parameter */
     public ItemPerpustakaan(String id, String judul, int tahunTerbit,
-                            String kategori, String penerbit) {
+                            Kategori kategori, String penerbit, int stok) {
         this.id = id;
         this.judul = judul;
         this.tahunTerbit = tahunTerbit;
         this.kategori = kategori;
         this.penerbit = penerbit;
-        this.tersedia = true;
-        this.type = getTipe();  // set discriminator dari abstract method
+        this.stok = (stok > 0) ? stok : 1;
+        this.dipinjam = 0;
+        this.type = getTipe();
     }
 
     // === Getter & Setter (Enkapsulasi) ===
@@ -50,11 +54,20 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     public int getTahunTerbit() { return tahunTerbit; }
     public void setTahunTerbit(int tahunTerbit) { this.tahunTerbit = tahunTerbit; }
 
-    public String getKategori() { return kategori; }
-    public void setKategori(String kategori) { this.kategori = kategori; }
+    public Kategori getKategori() { return kategori; }
+    public void setKategori(Kategori kategori) { this.kategori = kategori; }
 
-    public boolean isTersedia() { return tersedia; }
-    public void setTersedia(boolean tersedia) { this.tersedia = tersedia; }
+    /** Apakah item tersedia untuk dipinjam? (stok > dipinjam) */
+    public boolean isTersedia() { return (stok - dipinjam) > 0; }
+
+    /** Jumlah copy yang tersedia saat ini */
+    public int getTersedia() { return stok - dipinjam; }
+
+    public int getStok() { return stok; }
+    public void setStok(int stok) { this.stok = Math.max(stok, 0); }
+
+    public int getDipinjam() { return dipinjam; }
+    public void setDipinjam(int dipinjam) { this.dipinjam = Math.max(dipinjam, 0); }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
@@ -70,21 +83,26 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
 
     @Override
     public void pinjam() {
-        if (!tersedia) {
+        if (!isTersedia()) {
             throw new IllegalStateException(
-                "Item '" + judul + "' sedang tidak tersedia.");
+                "Item '" + judul + "' sedang tidak tersedia (stok: "
+                + getTersedia() + "/" + stok + ").");
         }
-        this.tersedia = false;
+        this.dipinjam++;
     }
 
     @Override
     public void kembalikan() {
-        this.tersedia = true;
+        if (dipinjam <= 0) {
+            throw new IllegalStateException(
+                "Item '" + judul + "' sedang tidak dipinjam.");
+        }
+        this.dipinjam--;
     }
 
     @Override
     public void perpanjang() {
-        if (tersedia) {
+        if (dipinjam <= 0) {
             throw new IllegalStateException(
                 "Item '" + judul + "' sedang tidak dipinjam.");
         }
@@ -95,7 +113,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
         if (keyword == null || keyword.isEmpty()) return false;
         String lower = keyword.toLowerCase();
         return judul.toLowerCase().contains(lower)
-            || kategori.toLowerCase().contains(lower)
+            || kategori.getDisplayName().toLowerCase().contains(lower)
             || penerbit.toLowerCase().contains(lower)
             || id.toLowerCase().contains(lower);
     }
@@ -104,6 +122,8 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     @Override
     public String toString() {
         return "[" + getTipe() + "] " + id + " - " + judul
-            + " (" + tahunTerbit + ") | " + (tersedia ? "Tersedia" : "Dipinjam");
+            + " (" + tahunTerbit + ")"
+            + " | " + kategori.getDisplayName()
+            + " | Sisa: " + getTersedia() + "/" + stok;
     }
 }

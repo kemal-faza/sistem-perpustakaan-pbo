@@ -4,7 +4,7 @@ import model.base.ItemPerpustakaan;
 
 /**
  * Kelas untuk merepresentasikan buku fisik di perpustakaan.
- * Turunan dari ItemPerpustakaan.
+ * Turunan dari ItemPerpustakaan. Memiliki stok (jumlah copy fisik).
  */
 public class BukuFisik extends ItemPerpustakaan {
 
@@ -18,9 +18,9 @@ public class BukuFisik extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public BukuFisik(String id, String judul, int tahunTerbit,
-                     String kategori, String penerbit,
-                     int jumlahHalaman, String lokasiRak) {
-        super(id, judul, tahunTerbit, kategori, penerbit);
+                     Kategori kategori, String penerbit,
+                     int jumlahHalaman, String lokasiRak, int stok) {
+        super(id, judul, tahunTerbit, kategori, penerbit, stok);
         this.jumlahHalaman = jumlahHalaman;
         this.lokasiRak = lokasiRak;
     }
@@ -32,10 +32,6 @@ public class BukuFisik extends ItemPerpustakaan {
     public String getLokasiRak() { return lokasiRak; }
     public void setLokasiRak(String lokasiRak) { this.lokasiRak = lokasiRak; }
 
-    /**
-     * Menghitung denda keterlambatan untuk buku fisik.
-     * Denda: Rp 1000 per hari.
-     */
     @Override
     public double hitungDenda(int hariTerlambat) {
         return hariTerlambat * 1000;

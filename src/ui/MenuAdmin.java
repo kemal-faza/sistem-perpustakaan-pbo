@@ -65,6 +65,24 @@ public class MenuAdmin extends MenuManager {
         }
     }
 
+    // ========== KATEGORI PICKER ==========
+
+    /** Menampilkan pilihan kategori dan return Kategori yang dipilih */
+    private Kategori pilihKategori() {
+        tampilkanHeader("PILIH KATEGORI");
+        Kategori[] daftar = Kategori.values();
+        for (int i = 0; i < daftar.length; i++) {
+            System.out.println("  " + (i + 1) + ". " + daftar[i].getDisplayName());
+        }
+        while (true) {
+            int pilihan = bacaInt("Pilih kategori (1-" + daftar.length + ")");
+            if (pilihan >= 1 && pilihan <= daftar.length) {
+                return daftar[pilihan - 1];
+            }
+            cetakError("Pilihan tidak valid.");
+        }
+    }
+
     // ========== BUKU ==========
 
     private void tambahBuku() {
@@ -73,7 +91,7 @@ public class MenuAdmin extends MenuManager {
         String id = service.generateIdBuku();
         String judul = bacaInputWajib("Judul");
         int tahun = bacaIntPositif("Tahun Terbit");
-        String kategori = bacaInput("Kategori");
+        Kategori kategori = pilihKategori();
         String penerbit = bacaInput("Penerbit");
 
         cetakInfo("Tipe: 1. Buku Fisik  2. Buku Digital  3. Jurnal");
@@ -84,7 +102,8 @@ public class MenuAdmin extends MenuManager {
             case 1 -> {
                 int halaman = bacaIntPositif("Jumlah Halaman");
                 String rak = bacaInput("Lokasi Rak");
-                item = new BukuFisik(id, judul, tahun, kategori, penerbit, halaman, rak);
+                int stok = bacaIntPositif("Jumlah Stok");
+                item = new BukuFisik(id, judul, tahun, kategori, penerbit, halaman, rak, stok);
             }
             case 2 -> {
                 double ukuran = bacaDouble("Ukuran File (MB)");
@@ -95,7 +114,8 @@ public class MenuAdmin extends MenuManager {
                 int volume = bacaIntPositif("Volume");
                 int nomor = bacaIntPositif("Nomor");
                 String bidang = bacaInput("Bidang Ilmu");
-                item = new Jurnal(id, judul, tahun, kategori, penerbit, volume, nomor, bidang);
+                int stok = bacaIntPositif("Jumlah Stok");
+                item = new Jurnal(id, judul, tahun, kategori, penerbit, volume, nomor, bidang, stok);
             }
             default -> {
                 cetakError("Tipe tidak valid.");
@@ -103,8 +123,12 @@ public class MenuAdmin extends MenuManager {
             }
         }
 
-        service.tambahBuku(item);
-        cetakSukses("Item '" + judul + "' berhasil ditambahkan (ID: " + id + ").");
+        String hasil = service.tambahBuku(item);
+        if (hasil.equals("stok")) {
+            cetakSukses("Stok item '" + judul + "' berhasil ditambahkan.");
+        } else {
+            cetakSukses("Item '" + judul + "' berhasil ditambahkan (ID: " + id + ").");
+        }
     }
 
     private void editBuku() {
@@ -134,10 +158,31 @@ public class MenuAdmin extends MenuManager {
         }
 
         String kategori = bacaInput("Kategori baru");
-        if (!kategori.isEmpty()) item.setKategori(kategori);
+        if (!kategori.isEmpty()) {
+            // Coba parse sebagai nama display enum
+            Kategori k = Kategori.fromString(kategori);
+            item.setKategori(k);
+        }
 
         String penerbit = bacaInput("Penerbit baru");
         if (!penerbit.isEmpty()) item.setPenerbit(penerbit);
+
+        // Edit stok
+        if (!(item instanceof BukuDigital)) {
+            String stokStr = bacaInput("Tambah stok (kosongi jika tidak)");
+            if (!stokStr.isEmpty()) {
+                try {
+                    int tambahan = Integer.parseInt(stokStr);
+                    if (tambahan > 0) {
+                        item.setStok(item.getStok() + tambahan);
+                        cetakSukses("Stok bertambah " + tambahan
+                            + " (total: " + item.getStok() + ").");
+                    }
+                } catch (NumberFormatException e) {
+                    cetakError("Stok tidak valid.");
+                }
+            }
+        }
 
         // Edit field spesifik per tipe
         if (item instanceof BukuFisik bukuFisik) {

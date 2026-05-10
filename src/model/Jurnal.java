@@ -4,7 +4,7 @@ import model.base.ItemPerpustakaan;
 
 /**
  * Kelas untuk merepresentasikan jurnal ilmiah di perpustakaan.
- * Turunan dari ItemPerpustakaan.
+ * Turunan dari ItemPerpustakaan. Jurnal bersifat fisik, memiliki stok.
  */
 public class Jurnal extends ItemPerpustakaan {
 
@@ -19,9 +19,9 @@ public class Jurnal extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public Jurnal(String id, String judul, int tahunTerbit,
-                  String kategori, String penerbit,
-                  int volume, int nomor, String bidang) {
-        super(id, judul, tahunTerbit, kategori, penerbit);
+                  Kategori kategori, String penerbit,
+                  int volume, int nomor, String bidang, int stok) {
+        super(id, judul, tahunTerbit, kategori, penerbit, stok);
         this.volume = volume;
         this.nomor = nomor;
         this.bidang = bidang;
@@ -37,10 +37,6 @@ public class Jurnal extends ItemPerpustakaan {
     public String getBidang() { return bidang; }
     public void setBidang(String bidang) { this.bidang = bidang; }
 
-    /**
-     * Menghitung denda keterlambatan untuk jurnal.
-     * Denda: Rp 2000 per hari (lebih mahal karena sifatnya referensi).
-     */
     @Override
     public double hitungDenda(int hariTerlambat) {
         return hariTerlambat * 2000;

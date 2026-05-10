@@ -110,6 +110,20 @@ public class MenuManager {
     }
 
     /**
+     * Membaca input lokasi rak dengan validasi format.
+     * Format yang valid: [Huruf][Angka]-[Slot], contoh: A1-01, B2-15
+     */
+    public String bacaLokasiRak() {
+        while (true) {
+            String input = bacaInput("Lokasi Rak (format: A1-01)");
+            if (input.isEmpty()) return "";
+            String cleaned = input.trim().toUpperCase();
+            if (cleaned.matches("^[A-Z]\\d+-\\d+$")) return cleaned;
+            cetakError("Format tidak valid. Contoh: A1-01, B2-15");
+        }
+    }
+
+    /**
      * Method pencarian buku bersama untuk Admin dan Anggota.
      * @param service referensi PerpustakaanService
      * @param tampilStatus jika true, tampilkan status ketersediaan (untuk Anggota)

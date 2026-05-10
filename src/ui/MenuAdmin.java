@@ -92,6 +92,7 @@ public class MenuAdmin extends MenuManager {
         String judul = bacaInputWajib("Judul");
         int tahun = bacaIntPositif("Tahun Terbit");
         Kategori kategori = pilihKategori();
+        String penulis = bacaInputWajib("Penulis");
         String penerbit = bacaInput("Penerbit");
 
         cetakInfo("Tipe: 1. Buku Fisik  2. Buku Digital  3. Jurnal");
@@ -101,21 +102,24 @@ public class MenuAdmin extends MenuManager {
         switch (tipe) {
             case 1 -> {
                 int halaman = bacaIntPositif("Jumlah Halaman");
-                String rak = bacaInput("Lokasi Rak");
+                String rak = bacaLokasiRak();
                 int stok = bacaIntPositif("Jumlah Stok");
-                item = new BukuFisik(id, judul, tahun, kategori, penerbit, halaman, rak, stok);
+                item = new BukuFisik(id, judul, tahun, kategori, penerbit, penulis,
+                                     halaman, rak, stok);
             }
             case 2 -> {
                 double ukuran = bacaDouble("Ukuran File (MB)");
                 String format = bacaInput("Format (PDF/EPUB)");
-                item = new BukuDigital(id, judul, tahun, kategori, penerbit, ukuran, format);
+                item = new BukuDigital(id, judul, tahun, kategori, penerbit, penulis,
+                                       ukuran, format);
             }
             case 3 -> {
                 int volume = bacaIntPositif("Volume");
                 int nomor = bacaIntPositif("Nomor");
                 String bidang = bacaInput("Bidang Ilmu");
                 int stok = bacaIntPositif("Jumlah Stok");
-                item = new Jurnal(id, judul, tahun, kategori, penerbit, volume, nomor, bidang, stok);
+                item = new Jurnal(id, judul, tahun, kategori, penerbit, penulis,
+                                  volume, nomor, bidang, stok);
             }
             default -> {
                 cetakError("Tipe tidak valid.");
@@ -167,6 +171,9 @@ public class MenuAdmin extends MenuManager {
         String penerbit = bacaInput("Penerbit baru");
         if (!penerbit.isEmpty()) item.setPenerbit(penerbit);
 
+        String penulis = bacaInput("Penulis baru");
+        if (!penulis.isEmpty()) item.setPenulis(penulis);
+
         // Edit stok
         if (!(item instanceof BukuDigital)) {
             String stokStr = bacaInput("Tambah stok (kosongi jika tidak)");
@@ -196,7 +203,7 @@ public class MenuAdmin extends MenuManager {
                     cetakError("Halaman tidak valid.");
                 }
             }
-            String rak = bacaInput("Lokasi Rak baru");
+            String rak = bacaLokasiRak();
             if (!rak.isEmpty()) bukuFisik.setLokasiRak(rak);
         } else if (item instanceof BukuDigital bukuDigital) {
             String ukuranStr = bacaInput("Ukuran File baru (MB)");

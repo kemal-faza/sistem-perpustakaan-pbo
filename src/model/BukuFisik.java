@@ -18,9 +18,9 @@ public class BukuFisik extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public BukuFisik(String id, String judul, int tahunTerbit,
-                     Kategori kategori, String penerbit,
+                     Kategori kategori, String penerbit, String penulis,
                      int jumlahHalaman, String lokasiRak, int stok) {
-        super(id, judul, tahunTerbit, kategori, penerbit, stok);
+        super(id, judul, tahunTerbit, kategori, penerbit, penulis, stok);
         this.jumlahHalaman = jumlahHalaman;
         this.lokasiRak = lokasiRak;
     }

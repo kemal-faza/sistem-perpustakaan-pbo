@@ -18,9 +18,9 @@ public class BukuDigital extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public BukuDigital(String id, String judul, int tahunTerbit,
-                       Kategori kategori, String penerbit,
+                       Kategori kategori, String penerbit, String penulis,
                        double ukuranFile, String format) {
-        super(id, judul, tahunTerbit, kategori, penerbit, 1);
+        super(id, judul, tahunTerbit, kategori, penerbit, penulis, 1);
         this.ukuranFile = ukuranFile;
         this.format = format;
     }

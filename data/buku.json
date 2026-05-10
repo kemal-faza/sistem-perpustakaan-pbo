@@ -8,6 +8,7 @@
     "tahunTerbit": 2024,
     "kategori": "TEKNOLOGI",
     "penerbit": "Informatika",
+    "penulis": "Tim Pengajar PBO",
     "stok": 3,
     "dipinjam": 0
   },
@@ -20,6 +21,7 @@
     "tahunTerbit": 2023,
     "kategori": "TEKNOLOGI",
     "penerbit": "Andi Publisher",
+    "penulis": "Rosa A.S.",
     "stok": 2,
     "dipinjam": 0
   },
@@ -32,6 +34,7 @@
     "tahunTerbit": 2024,
     "kategori": "TEKNOLOGI",
     "penerbit": "E-Book Publisher",
+    "penulis": "Budi Raharjo",
     "stok": 1,
     "dipinjam": 0
   },
@@ -45,6 +48,7 @@
     "tahunTerbit": 2024,
     "kategori": "ILMIAH",
     "penerbit": "Universitas Diponegoro",
+    "penulis": "Tim Editor JIF",
     "stok": 2,
     "dipinjam": 0
   }

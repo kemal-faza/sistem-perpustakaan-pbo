@@ -18,6 +18,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     private int tahunTerbit;
     private Kategori kategori;
     private String penerbit;
+    private String penulis;
     private int stok;
     private int dipinjam;
 
@@ -32,12 +33,13 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
 
     /** Constructor dengan parameter */
     public ItemPerpustakaan(String id, String judul, int tahunTerbit,
-                            Kategori kategori, String penerbit, int stok) {
+                            Kategori kategori, String penerbit, String penulis, int stok) {
         this.id = id;
         this.judul = judul;
         this.tahunTerbit = tahunTerbit;
         this.kategori = kategori;
         this.penerbit = penerbit;
+        this.penulis = penulis;
         this.stok = (stok > 0) ? stok : 1;
         this.dipinjam = 0;
         this.type = getTipe();
@@ -56,6 +58,9 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
 
     public Kategori getKategori() { return kategori; }
     public void setKategori(Kategori kategori) { this.kategori = kategori; }
+
+    public String getPenulis() { return penulis; }
+    public void setPenulis(String penulis) { this.penulis = penulis; }
 
     /** Apakah item tersedia untuk dipinjam? (stok > dipinjam) */
     public boolean isTersedia() { return (stok - dipinjam) > 0; }
@@ -113,6 +118,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
         if (keyword == null || keyword.isEmpty()) return false;
         String lower = keyword.toLowerCase();
         return judul.toLowerCase().contains(lower)
+            || (penulis != null && penulis.toLowerCase().contains(lower))
             || kategori.getDisplayName().toLowerCase().contains(lower)
             || penerbit.toLowerCase().contains(lower)
             || id.toLowerCase().contains(lower);
@@ -122,6 +128,7 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
     @Override
     public String toString() {
         return "[" + getTipe() + "] " + id + " - " + judul
+            + " oleh " + (penulis != null ? penulis : "-")
             + " (" + tahunTerbit + ")"
             + " | " + kategori.getDisplayName()
             + " | Sisa: " + getTersedia() + "/" + stok;

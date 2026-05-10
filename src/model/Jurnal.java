@@ -19,9 +19,9 @@ public class Jurnal extends ItemPerpustakaan {
 
     /** Constructor dengan parameter */
     public Jurnal(String id, String judul, int tahunTerbit,
-                  Kategori kategori, String penerbit,
+                  Kategori kategori, String penerbit, String penulis,
                   int volume, int nomor, String bidang, int stok) {
-        super(id, judul, tahunTerbit, kategori, penerbit, stok);
+        super(id, judul, tahunTerbit, kategori, penerbit, penulis, stok);
         this.volume = volume;
         this.nomor = nomor;
         this.bidang = bidang;

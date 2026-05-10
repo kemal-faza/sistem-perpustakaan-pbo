@@ -153,10 +153,13 @@ public class PerpustakaanService {
      * @return "baru" jika item baru, "stok" jika hanya menambah stok item existing
      */
     public String tambahBuku(ItemPerpustakaan item) {
-        // Cek duplikasi: apakah judul + tipe sudah ada?
+        // Cek duplikasi: apakah judul + tipe + penulis sudah ada?
+        String itemPenulis = (item.getPenulis() != null) ? item.getPenulis() : "";
         for (ItemPerpustakaan existing : repoBuku.getAll()) {
+            String existPenulis = (existing.getPenulis() != null) ? existing.getPenulis() : "";
             if (existing.getJudul().equalsIgnoreCase(item.getJudul())
-                    && existing.getTipe().equals(item.getTipe())) {
+                    && existing.getTipe().equals(item.getTipe())
+                    && existPenulis.equalsIgnoreCase(itemPenulis)) {
                 // Duplikat → tambah stok item existing
                 existing.setStok(existing.getStok() + item.getStok());
                 repoBuku.saveToJson();
@@ -487,13 +490,17 @@ public class PerpustakaanService {
 
         if (repoBuku.size() == 0) {
             repoBuku.add(new BukuFisik("B001", "Pemrograman Berorientasi Objek", 2024,
-                    Kategori.TEKNOLOGI, "Informatika", 350, "A1-01", 3));
+                    Kategori.TEKNOLOGI, "Informatika", "Tim Pengajar PBO",
+                    350, "A1-01", 3));
             repoBuku.add(new BukuFisik("B002", "Struktur Data dan Algoritma", 2023,
-                    Kategori.TEKNOLOGI, "Andi Publisher", 420, "A1-02", 2));
+                    Kategori.TEKNOLOGI, "Andi Publisher", "Rosa A.S.",
+                    420, "A1-02", 2));
             repoBuku.add(new BukuDigital("B003", "Belajar Java dalam Sehari", 2024,
-                    Kategori.TEKNOLOGI, "E-Book Publisher", 5.2, "PDF"));
+                    Kategori.TEKNOLOGI, "E-Book Publisher", "Budi Raharjo",
+                    5.2, "PDF"));
             repoBuku.add(new Jurnal("B004", "Jurnal Informatika Undip", 2024,
-                    Kategori.ILMIAH, "Universitas Diponegoro", 12, 1, "Ilmu Komputer", 2));
+                    Kategori.ILMIAH, "Universitas Diponegoro", "Tim Editor JIF",
+                    12, 1, "Ilmu Komputer", 2));
             repoBuku.saveToJson();
             dataDitambahkan = true;
         }

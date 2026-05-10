@@ -228,7 +228,7 @@ Repository adalah **bounded generic**: `Repository<T extends ItemPerpustakaan>` 
 
 ### 3.8 UI / Menu
 
-**`MenuManager`** (abstract base):
+**`MenuManager`** (base class):
 
 - `void tampilkanHeader()`
 - `int tampilkanMenu(String[] opsi)`
@@ -273,6 +273,10 @@ classDiagram
     }
 
     %% ── INTERFACES ──
+    class Identifiable {
+        <<interface>>
+        + getId() String
+    }
     class IBorrowable {
         <<interface>>
         + pinjam() void
@@ -376,7 +380,6 @@ classDiagram
     }
 
     class MenuManager {
-        <<abstract>>
         + tampilkanHeader() void
         + tampilkanMenu(String[]) int
         + bacaInput() String
@@ -392,11 +395,16 @@ classDiagram
     class BukuTidakDitemukanException
 
     %% ── RELATIONSHIPS ──
+    ItemPerpustakaan ..|> Identifiable
+    ItemPerpustakaan ..|> IBorrowable
+    ItemPerpustakaan ..|> ISearchable
+    Anggota ..|> Identifiable
+    Peminjaman ..|> Identifiable
+    Admin ..|> Identifiable
+
     ItemPerpustakaan <|-- BukuFisik
     ItemPerpustakaan <|-- BukuDigital
     ItemPerpustakaan <|-- Jurnal
-    ItemPerpustakaan ..|> IBorrowable
-    ItemPerpustakaan ..|> ISearchable
 
     Peminjaman --> Anggota : idAnggota
     Peminjaman --> ItemPerpustakaan : idItem
@@ -540,7 +548,7 @@ classDiagram
 | 19  | **Association**                           | Peminjangan → Anggota (via ID)                                                | ✅     |
 | 20  | **Composition**                           | Peminjaman berisi reference ke ItemPerpustakaan                               | ✅     |
 | 21  | **Aggregation**                           | PerpustakaanService mengelola Repository                                      | ✅     |
-| 22  | **Dependency**                            | UI layer bergantung pada Service layer                                        | ☐     |
+| 22  | **Dependency**                            | UI layer bergantung pada Service layer                                        | ✅     |
 | 23  | **super Keyword**                         | Constructor chaining di subclass                                              | ✅     |
 | 24  | **this Keyword**                          | Resolve shadowing, constructor chaining                                       | ✅     |
 | 25  | **Final Variable**                        | MAX_PINJAM = 3                                                                | ✅     |
@@ -550,7 +558,7 @@ classDiagram
 | 29  | **Enum**                                  | StatusPeminjaman (DIPINJAM, DIKEMBALIKAN, TERLAMBAT)                         | ✅     |
 | 30  | **Persistent Object**                     | Save/load JSON via Gson + RuntimeTypeAdapterFactory                           | ✅     |
 | 31  | **Instance vs Class Member**              | Instance: id, nama; Class: MAX_PINJAM, instance Singleton                     | ✅     |
-| 32  | **Message Passing**                       | Main → Service → Repository                                                   | ☐     |
+| 32  | **Message Passing**                       | Main → Service → Repository                                                   | ✅     |
 
 **Total: 32 konsep OOP**
 
@@ -563,8 +571,8 @@ classDiagram
 | **Fase 1: Setup & Model**         | Struktur folder, model classes, interfaces, enum, exception | Hari 1-2     | ✅ Selesai |
 | **Fase 2: Generic & Persistence** | Repository<T>, Gson setup, save/load JSON                   | Hari 3-4     | ✅ Selesai |
 | **Fase 3: Service & Logic**       | PerpustakaanService (Singleton), AuthService, business logic| Hari 5-6     | ✅ Selesai |
-| **Fase 4: UI**                    | MenuManager, MenuAdmin, MenuAnggota, Main                   | Hari 7-8     | 🔜 Proses |
-| **Fase 5: Finalisasi**            | Testing, UML Mermaid (README), GitHub push                  | Hari 9-10    | ☐         |
+| **Fase 4: UI**                    | MenuManager, MenuAdmin, MenuAnggota, Main                   | Hari 7-8     | ✅ Selesai |
+| **Fase 5: Finalisasi**            | README, UML Mermaid, final PLAN.md, GitHub push             | Hari 9-10    | 🔜 Proses |
 
 ---
 

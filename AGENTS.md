@@ -77,8 +77,8 @@ data/
 - [x] Association, Composition, Aggregation, Dependency
 - [x] super, this, final, static
 - [x] Singleton Pattern, Enum, Persistent Object
-- [ ] Dependency (UI → Service) — pending (Phase 4)
-- [ ] Message Passing — pending (Phase 4)
+- [x] Dependency (UI → Service)
+- [x] Message Passing (Main → Service → Repository)
 
 ## References
 - Course materials: `/reference/` (10 PDF files on OOP concepts)

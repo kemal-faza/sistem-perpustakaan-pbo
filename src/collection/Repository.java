@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
+import interfaces.Identifiable;
 import model.abstracts.ItemPerpustakaan;
 import model.BukuFisik;
 import model.BukuDigital;
@@ -19,16 +20,15 @@ import java.util.stream.Collectors;
 
 /**
  * Generic class untuk operasi CRUD dan persistensi JSON.
- * Menerapkan konsep Generic dengan bounded type parameter.
+ * Menerapkan konsep Generic dengan bounded type parameter Identifiable.
  *
- * @param <T> tipe objek yang dikelola
+ * @param <T> tipe objek yang dikelola (harus implements Identifiable)
  */
-public class Repository<T> {
+public class Repository<T extends Identifiable> {
 
     private ArrayList<T> items;
     private String filePath;
     private Type typeToken;
-    private Class<T> clazz;
 
     /**
      * Constructor repository.
@@ -54,18 +54,10 @@ public class Repository<T> {
      * @param id ID item yang dicari
      * @return item jika ditemukan, null jika tidak
      */
-    @SuppressWarnings("unchecked")
     public T findById(String id) {
         for (T item : items) {
-            // Gunakan refleksi untuk akses method getId
-            try {
-                java.lang.reflect.Method getIdMethod = item.getClass().getMethod("getId");
-                String itemId = (String) getIdMethod.invoke(item);
-                if (itemId != null && itemId.equals(id)) {
-                    return item;
-                }
-            } catch (Exception e) {
-                // Jika tidak punya method getId, skip
+            if (item.getId() != null && item.getId().equals(id)) {
+                return item;
             }
         }
         return null;
@@ -87,17 +79,8 @@ public class Repository<T> {
      * @param id ID item yang akan dihapus
      * @return true jika berhasil dihapus
      */
-    @SuppressWarnings("unchecked")
     public boolean delete(String id) {
-        return items.removeIf(item -> {
-            try {
-                java.lang.reflect.Method getIdMethod = item.getClass().getMethod("getId");
-                String itemId = (String) getIdMethod.invoke(item);
-                return itemId != null && itemId.equals(id);
-            } catch (Exception e) {
-                return false;
-            }
-        });
+        return items.removeIf(item -> item.getId() != null && item.getId().equals(id));
     }
 
     /**
@@ -105,21 +88,16 @@ public class Repository<T> {
      * @param updatedItem item dengan data terbaru
      * @return true jika berhasil diupdate
      */
-    @SuppressWarnings("unchecked")
     public boolean update(T updatedItem) {
-        try {
-            java.lang.reflect.Method getIdMethod = updatedItem.getClass().getMethod("getId");
-            String targetId = (String) getIdMethod.invoke(updatedItem);
+        String targetId = updatedItem.getId();
+        if (targetId == null) return false;
 
-            for (int i = 0; i < items.size(); i++) {
-                String currentId = (String) getIdMethod.invoke(items.get(i));
-                if (currentId != null && currentId.equals(targetId)) {
-                    items.set(i, updatedItem);
-                    return true;
-                }
+        for (int i = 0; i < items.size(); i++) {
+            String currentId = items.get(i).getId();
+            if (currentId != null && currentId.equals(targetId)) {
+                items.set(i, updatedItem);
+                return true;
             }
-        } catch (Exception e) {
-            return false;
         }
         return false;
     }
@@ -176,17 +154,14 @@ public class Repository<T> {
      * untuk mendukung polymorphic deserialization ItemPerpustakaan.
      */
     private GsonBuilder createGson() {
-        // Type adapter factory untuk polymorphic ItemPerpustakaan
         RuntimeTypeAdapterFactory<ItemPerpustakaan> typeFactory =
             RuntimeTypeAdapterFactory.of(ItemPerpustakaan.class, "type")
                 .registerSubtype(BukuFisik.class, "BukuFisik")
                 .registerSubtype(BukuDigital.class, "BukuDigital")
                 .registerSubtype(Jurnal.class, "Jurnal");
 
-        GsonBuilder builder = new GsonBuilder()
+        return new GsonBuilder()
             .registerTypeAdapterFactory(typeFactory);
-
-        return builder;
     }
 
     // === Utility ===
@@ -200,16 +175,15 @@ public class Repository<T> {
     public String generateId(String prefix) {
         int maxNum = 0;
         for (T item : items) {
-            try {
-                java.lang.reflect.Method getIdMethod = item.getClass().getMethod("getId");
-                String itemId = (String) getIdMethod.invoke(item);
-                if (itemId != null && itemId.startsWith(prefix)) {
-                    String numStr = itemId.substring(prefix.length());
+            String itemId = item.getId();
+            if (itemId != null && itemId.startsWith(prefix)) {
+                String numStr = itemId.substring(prefix.length());
+                try {
                     int num = Integer.parseInt(numStr);
                     maxNum = Math.max(maxNum, num);
+                } catch (NumberFormatException e) {
+                    // skip item dengan format ID berbeda
                 }
-            } catch (Exception e) {
-                // skip
             }
         }
         return prefix + String.format("%03d", maxNum + 1);

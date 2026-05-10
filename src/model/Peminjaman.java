@@ -1,5 +1,6 @@
 package model;
 
+import interfaces.Identifiable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -7,7 +8,7 @@ import java.time.temporal.ChronoUnit;
  * Kelas untuk merepresentasikan transaksi peminjaman item perpustakaan.
  * Menerapkan konsep Composition (mengandung reference ke ItemPerpustakaan dan Anggota).
  */
-public class Peminjaman {
+public class Peminjaman implements Identifiable {
 
     private String idPeminjaman;
     private String idAnggota;      // Association ke Anggota
@@ -38,6 +39,9 @@ public class Peminjaman {
     }
 
     // === Getter & Setter ===
+    @Override
+    public String getId() { return idPeminjaman; }
+
     public String getIdPeminjaman() { return idPeminjaman; }
     public void setIdPeminjaman(String idPeminjaman) { this.idPeminjaman = idPeminjaman; }
 

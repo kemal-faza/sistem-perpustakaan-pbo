@@ -2,12 +2,13 @@ package model.abstracts;
 
 import interfaces.IBorrowable;
 import interfaces.ISearchable;
+import interfaces.Identifiable;
 
 /**
  * Abstract class yang menjadi basis untuk semua item di perpustakaan.
  * Menerapkan konsep abstract class, abstract method, dan interface.
  */
-public abstract class ItemPerpustakaan implements IBorrowable, ISearchable {
+public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISearchable {
 
     // === Atribut dengan Enkapsulasi (private) ===
     private String id;

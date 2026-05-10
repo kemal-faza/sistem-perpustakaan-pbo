@@ -43,8 +43,7 @@ perpustakaan-pbo/
 │   │   └── Peminjaman.java
 │   ├── interfaces/
 │   │   ├── IBorrowable.java
-│   │   ├── ISearchable.java
-│   │   └── IReservable.java
+│   │   └── ISearchable.java
 │   ├── collection/
 │   │   └── Repository.java                # Generic class untuk CRUD & JSON
 │   ├── exception/
@@ -130,11 +129,6 @@ perpustakaan-pbo/
 #### `ISearchable`
 
 - `boolean cocok(String keyword)` — search by keyword
-
-#### `IReservable`
-
-- `void reservasi(Anggota a)`
-- `void batalReservasi()`
 
 ### 3.4 Domain Lainnya
 
@@ -280,11 +274,6 @@ classDiagram
         <<interface>>
         + cocok(String keyword) boolean
     }
-    class IReservable {
-        <<interface>>
-        + reservasi(Anggota a) void
-        + batalReservasi() void
-    }
 
     %% ── ABSTRACT CLASS ──
     class ItemPerpustakaan {
@@ -399,7 +388,6 @@ classDiagram
     ItemPerpustakaan <|-- Jurnal
     ItemPerpustakaan ..|> IBorrowable
     ItemPerpustakaan ..|> ISearchable
-    ItemPerpustakaan ..|> IReservable
 
     Peminjaman --> Anggota : idAnggota
     Peminjaman --> ItemPerpustakaan : idItem
@@ -527,7 +515,7 @@ classDiagram
 | 5   | **Inheritance (Single & Hierarchical)**   | BukuFisik, Digital, Jurnal ← ItemPerpustakaan          | ☐      |
 | 6   | **Abstract Class**                        | ItemPerpustakaan                                       | ☐      |
 | 7   | **Abstract Method**                       | hitungDenda(), getTipe()                               | ☐      |
-| 8   | **Interface**                             | IBorrowable, ISearchable, IReservable                  | ☐      |
+| 8   | **Interface**                             | IBorrowable, ISearchable                                | ☐      |
 | 9   | **Implements Multiple Interface**         | ItemPerpustakaan implements IBorrowable, ISearchable   | ☐      |
 | 10  | **Method Overriding**                     | hitungDenda(), getTipe() di tiap subclass              | ☐      |
 | 11  | **Method Overloading**                    | Constructor overload, overloaded method                | ☐      |

@@ -1,10 +1,12 @@
 package model;
 
+import interfaces.Identifiable;
+
 /**
  * Kelas untuk merepresentasikan anggota perpustakaan.
  * Menerapkan enkapsulasi dengan private fields dan public getter/setter.
  */
-public class Anggota {
+public class Anggota implements Identifiable {
 
     /** Batas maksimal peminjaman untuk setiap anggota */
     public static final int MAX_PINJAM = 3;

@@ -1,37 +1,40 @@
 package model;
 
+import interfaces.Identifiable;
+
 /**
  * Kelas untuk merepresentasikan admin perpustakaan.
  * Admin memiliki kredensial untuk login dan mengelola sistem.
  */
-public class Admin {
+public class Admin implements Identifiable {
 
     /** Username default untuk admin */
-    public static final String DEFAULT_USERNAME = "admin";
-    /** Password default untuk admin */
-    public static final String DEFAULT_PASSWORD = "admin123";
+    private static final String DEFAULT_USERNAME = "admin";
 
+    private String id;
     private String username;
     private String password;
 
     /** Constructor default dengan kredensial default */
     public Admin() {
+        this.id = "ADM001";
         this.username = DEFAULT_USERNAME;
-        this.password = DEFAULT_PASSWORD;
+        this.password = "admin123";
     }
 
     /** Constructor dengan parameter */
-    public Admin(String username, String password) {
+    public Admin(String id, String username, String password) {
+        this.id = id;
         this.username = username;
         this.password = password;
     }
 
     // === Getter & Setter ===
+    @Override
+    public String getId() { return id; }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
 
     /**
      * Memvalidasi password yang dimasukkan.
@@ -44,6 +47,6 @@ public class Admin {
 
     @Override
     public String toString() {
-        return "Admin: " + username;
+        return "Admin: " + username + " (" + id + ")";
     }
 }

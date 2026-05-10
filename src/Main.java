@@ -20,14 +20,17 @@ public class Main {
         PerpustakaanService service = PerpustakaanService.getInstance();
 
         // Load sample data jika database kosong
-        service.loadSampleData();
+        boolean dataBaru = service.loadSampleData();
 
         System.out.println("\n" + "=".repeat(43));
         System.out.println("  SISTEM MANAJEMEN PERPUSTAKAAN");
         System.out.println("  Tugas Besar Pemrograman Berorientasi Objek");
+        if (dataBaru) {
+            System.out.println("  (Data sample berhasil dimuat)");
+        }
         System.out.println("=".repeat(43));
 
-        MenuManager menuBase = new MenuManager() {};
+        MenuManager menuBase = new MenuManager();
         boolean running = true;
 
         while (running) {
@@ -46,9 +49,9 @@ public class Main {
     }
 
     private static void loginAdmin(PerpustakaanService service) {
-        MenuManager menu = new MenuManager() {};
-        menu.tampilkanHeader("LOGIN ADMIN");
+        MenuManager menu = new MenuManager();
 
+        menu.tampilkanHeader("LOGIN ADMIN");
         String username = menu.bacaInput("Username");
         String password = menu.bacaInput("Password");
 
@@ -62,9 +65,9 @@ public class Main {
     }
 
     private static void loginAnggota(PerpustakaanService service) {
-        MenuManager menu = new MenuManager() {};
-        menu.tampilkanHeader("LOGIN ANGGOTA");
+        MenuManager menu = new MenuManager();
 
+        menu.tampilkanHeader("LOGIN ANGGOTA");
         String id = menu.bacaInput("ID Anggota");
 
         try {

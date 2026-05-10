@@ -2,7 +2,7 @@ package ui;
 
 import exception.*;
 import model.*;
-import model.abstracts.ItemPerpustakaan;
+import model.base.ItemPerpustakaan;
 import service.PerpustakaanService;
 
 import java.util.List;
@@ -49,13 +49,14 @@ public class MenuAdmin extends MenuManager {
                     case 7 -> lihatSemuaAnggota();
                     case 8 -> laporanPeminjaman();
                     case 0 -> {
+                        service.logout();
                         cetakInfo("Logout berhasil.");
                         running = false;
                     }
                     default -> cetakError("Pilihan tidak valid.");
                 }
             } catch (Exception e) {
-                cetakError(e.getMessage());
+                cetakError("Terjadi kesalahan: " + e.getMessage());
             }
 
             if (running && pilihan != 0) {
@@ -86,7 +87,7 @@ public class MenuAdmin extends MenuManager {
                 item = new BukuFisik(id, judul, tahun, kategori, penerbit, halaman, rak);
             }
             case 2 -> {
-                double ukuran = Double.parseDouble(bacaInput("Ukuran File (MB)"));
+                double ukuran = bacaDouble("Ukuran File (MB)");
                 String format = bacaInput("Format (PDF/EPUB)");
                 item = new BukuDigital(id, judul, tahun, kategori, penerbit, ukuran, format);
             }
@@ -124,7 +125,13 @@ public class MenuAdmin extends MenuManager {
         if (!judul.isEmpty()) item.setJudul(judul);
 
         String tahunStr = bacaInput("Tahun Terbit baru");
-        if (!tahunStr.isEmpty()) item.setTahunTerbit(Integer.parseInt(tahunStr));
+        if (!tahunStr.isEmpty()) {
+            try {
+                item.setTahunTerbit(Integer.parseInt(tahunStr));
+            } catch (NumberFormatException e) {
+                cetakError("Tahun tidak valid, menggunakan tahun lama.");
+            }
+        }
 
         String kategori = bacaInput("Kategori baru");
         if (!kategori.isEmpty()) item.setKategori(kategori);
@@ -188,20 +195,7 @@ public class MenuAdmin extends MenuManager {
     }
 
     private void cariBuku() {
-        tampilkanHeader("CARI BUKU");
-
-        String keyword = bacaInput("Kata kunci");
-        List<ItemPerpustakaan> hasil = service.cariBuku(keyword);
-
-        if (hasil.isEmpty()) {
-            cetakInfo("Tidak ada item yang cocok dengan \"" + keyword + "\".");
-            return;
-        }
-
-        cetakInfo("Ditemukan " + hasil.size() + " item:\n");
-        for (ItemPerpustakaan item : hasil) {
-            System.out.println("  " + item);
-        }
+        super.cariBuku(service, false);
     }
 
     // ========== ANGGOTA ==========

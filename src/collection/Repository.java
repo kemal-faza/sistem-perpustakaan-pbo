@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import interfaces.Identifiable;
-import model.abstracts.ItemPerpustakaan;
+import model.base.ItemPerpustakaan;
 import model.BukuFisik;
 import model.BukuDigital;
 import model.Jurnal;
@@ -120,12 +120,14 @@ public class Repository<T extends Identifiable> {
     // === Persistence (JSON) ===
 
     /** Menyimpan data ke file JSON */
-    public void saveToJson() {
+    public boolean saveToJson() {
         Gson gson = createGson().setPrettyPrinting().create();
         try (Writer writer = new FileWriter(filePath)) {
             gson.toJson(items, writer);
+            return true;
         } catch (IOException e) {
             System.err.println("Gagal menyimpan ke " + filePath + ": " + e.getMessage());
+            return false;
         }
     }
 

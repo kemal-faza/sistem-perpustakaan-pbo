@@ -1,4 +1,4 @@
-package model.abstracts;
+package model.base;
 
 import interfaces.IBorrowable;
 import interfaces.ISearchable;
@@ -55,6 +55,9 @@ public abstract class ItemPerpustakaan implements Identifiable, IBorrowable, ISe
 
     public boolean isTersedia() { return tersedia; }
     public void setTersedia(boolean tersedia) { this.tersedia = tersedia; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
     public String getPenerbit() { return penerbit; }
     public void setPenerbit(String penerbit) { this.penerbit = penerbit; }

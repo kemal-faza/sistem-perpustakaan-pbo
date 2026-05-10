@@ -2,7 +2,7 @@ package ui;
 
 import exception.*;
 import model.*;
-import model.abstracts.ItemPerpustakaan;
+import model.base.ItemPerpustakaan;
 import service.PerpustakaanService;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class MenuAnggota extends MenuManager {
                     default -> cetakError("Pilihan tidak valid.");
                 }
             } catch (Exception e) {
-                cetakError(e.getMessage());
+                cetakError("Terjadi kesalahan: " + e.getMessage());
             }
 
             if (running && pilihan != 0) {
@@ -67,21 +67,7 @@ public class MenuAnggota extends MenuManager {
     // ========== BUKU ==========
 
     private void cariBuku() {
-        tampilkanHeader("CARI BUKU");
-
-        String keyword = bacaInput("Kata kunci");
-        List<ItemPerpustakaan> hasil = service.cariBuku(keyword);
-
-        if (hasil.isEmpty()) {
-            cetakInfo("Tidak ada item yang cocok dengan \"" + keyword + "\".");
-            return;
-        }
-
-        cetakInfo("Ditemukan " + hasil.size() + " item:\n");
-        for (ItemPerpustakaan item : hasil) {
-            String status = item.isTersedia() ? "✔ Tersedia" : "✖ Dipinjam";
-            System.out.println("  " + item + " | " + status);
-        }
+        super.cariBuku(service, true);
     }
 
     // ========== PEMINJAMAN ==========
@@ -96,6 +82,19 @@ public class MenuAnggota extends MenuManager {
         }
 
         String idBuku = bacaInput("ID Buku");
+
+        // Cek info buku dulu
+        ItemPerpustakaan item = service.getBukuById(idBuku);
+        if (item == null) {
+            cetakError("Item dengan ID '" + idBuku + "' tidak ditemukan.");
+            return;
+        }
+        cetakInfo("Meminjam: " + item.getJudul() + " (" + item.getTipe() + ")");
+        String konfirmasi = bacaInput("Yakin pinjam? (y/n)");
+        if (!konfirmasi.equalsIgnoreCase("y")) {
+            cetakInfo("Peminjaman dibatalkan.");
+            return;
+        }
 
         try {
             service.pinjamBuku(idBuku, anggota.getId());
@@ -138,17 +137,8 @@ public class MenuAnggota extends MenuManager {
         String idPeminjaman = bacaInput("\nID Peminjaman yang dikembalikan");
 
         try {
-            service.kembalikanBuku(idPeminjaman);
-            // Ambil data peminjaman untuk menampilkan denda
-            List<Peminjaman> semua = service.getAllPeminjaman();
-            Peminjaman updated = null;
-            for (Peminjaman p : semua) {
-                if (p.getId().equals(idPeminjaman)) {
-                    updated = p;
-                    break;
-                }
-            }
-            if (updated != null && updated.getDenda() > 0) {
+            Peminjaman updated = service.kembalikanBuku(idPeminjaman);
+            if (updated.getDenda() > 0) {
                 cetakInfo("Terlambat! Denda: Rp " + String.format("%,.0f", updated.getDenda()));
             } else {
                 cetakSukses("Buku berhasil dikembalikan tepat waktu. Tidak ada denda.");

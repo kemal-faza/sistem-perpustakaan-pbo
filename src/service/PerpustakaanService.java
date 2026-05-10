@@ -5,7 +5,7 @@ import collection.Repository;
 import exception.*;
 import interfaces.ISearchable;
 import model.*;
-import model.abstracts.ItemPerpustakaan;
+import model.base.ItemPerpustakaan;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
@@ -307,11 +307,12 @@ public class PerpustakaanService {
      * Memproses pengembalian item.
      *
      * @param idPeminjaman ID transaksi peminjaman
+     * @return objek Peminjaman yang sudah diupdate (dengan status dan denda)
      * @throws BukuTidakDitemukanException jika item terkait tidak ditemukan
      * @throws AnggotaTidakValidException  jika anggota terkait tidak ditemukan
      * @throws IllegalStateException       jika peminjaman sudah dikembalikan
      */
-    public void kembalikanBuku(String idPeminjaman)
+    public Peminjaman kembalikanBuku(String idPeminjaman)
             throws BukuTidakDitemukanException, AnggotaTidakValidException, IllegalStateException {
 
         // Cari peminjaman
@@ -324,7 +325,7 @@ public class PerpustakaanService {
         // Idempotency guard: cek apakah peminjaman sudah selesai
         if (peminjaman.getStatus() != StatusPeminjaman.DIPINJAM) {
             throw new IllegalStateException(
-                    "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
+                "Peminjaman #" + idPeminjaman + " sudah dikembalikan sebelumnya.");
         }
 
         // Cari item terkait
@@ -360,6 +361,8 @@ public class PerpustakaanService {
         repoPeminjaman.saveToJson();
         repoBuku.saveToJson();
         repoAnggota.saveToJson();
+
+        return peminjaman;
     }
 
     /**
@@ -423,9 +426,13 @@ public class PerpustakaanService {
 
     /** Menyimpan semua repository ke JSON */
     public void simpanSemua() {
-        repoBuku.saveToJson();
-        repoAnggota.saveToJson();
-        repoPeminjaman.saveToJson();
+        boolean ok = true;
+        if (!repoBuku.saveToJson()) ok = false;
+        if (!repoAnggota.saveToJson()) ok = false;
+        if (!repoPeminjaman.saveToJson()) ok = false;
+        if (!ok) {
+            System.err.println("Peringatan: Gagal menyimpan beberapa data!");
+        }
     }
 
     // ========== GENERATE ID ==========
@@ -448,10 +455,10 @@ public class PerpustakaanService {
 
     /**
      * Mengisi data sample jika repository masih kosong.
-     * Memuat contoh buku, anggota, dan peminjaman untuk demo.
+     * @return true jika data sample baru berhasil ditambahkan, false jika sudah ada data
      */
-    public void loadSampleData() {
-        if (sampleLoaded) return;
+    public boolean loadSampleData() {
+        if (sampleLoaded) return false;
 
         boolean dataDitambahkan = false;
 
@@ -478,8 +485,6 @@ public class PerpustakaanService {
 
         sampleLoaded = true;
 
-        if (dataDitambahkan) {
-            System.out.println("Data sample berhasil dimuat.");
-        }
+        return dataDitambahkan;
     }
 }

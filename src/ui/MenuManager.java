@@ -1,12 +1,15 @@
 package ui;
 
 import java.util.Scanner;
+import java.util.List;
+import model.base.ItemPerpustakaan;
+import service.PerpustakaanService;
 
 /**
  * Abstract base class untuk menu CLI.
  * Menyediakan utility methods untuk input/output konsol.
  */
-public abstract class MenuManager {
+public class MenuManager {
 
     protected static final Scanner scanner = new Scanner(System.in);
     protected static final String LINE = "===========================================";
@@ -55,6 +58,18 @@ public abstract class MenuManager {
         }
     }
 
+    /** Membaca input double dari user */
+    public double bacaDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt + ": ");
+            try {
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("  [Error] Masukkan angka yang valid (contoh: 5.2).");
+            }
+        }
+    }
+
     /** Menunggu user menekan Enter */
     public void tungguEnter() {
         System.out.print("\nTekan Enter untuk melanjutkan...");
@@ -74,5 +89,32 @@ public abstract class MenuManager {
     /** Cetak pesan informasi */
     public void cetakInfo(String msg) {
         System.out.println("  " + msg);
+    }
+
+    /**
+     * Method pencarian buku bersama untuk Admin dan Anggota.
+     * @param service referensi PerpustakaanService
+     * @param tampilStatus jika true, tampilkan status ketersediaan (untuk Anggota)
+     */
+    public void cariBuku(PerpustakaanService service, boolean tampilStatus) {
+        tampilkanHeader("CARI BUKU");
+
+        String keyword = bacaInput("Kata kunci");
+        List<ItemPerpustakaan> hasil = service.cariBuku(keyword);
+
+        if (hasil.isEmpty()) {
+            cetakInfo("Tidak ada item yang cocok dengan \"" + keyword + "\".");
+            return;
+        }
+
+        cetakInfo("Ditemukan " + hasil.size() + " item:\n");
+        for (ItemPerpustakaan item : hasil) {
+            if (tampilStatus) {
+                String status = item.isTersedia() ? "✔ Tersedia" : "✖ Dipinjam";
+                System.out.println("  " + item + " | " + status);
+            } else {
+                System.out.println("  " + item);
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 package model;
 
-import model.abstracts.ItemPerpustakaan;
+import model.base.ItemPerpustakaan;
 
 /**
  * Kelas untuk merepresentasikan jurnal ilmiah di perpustakaan.

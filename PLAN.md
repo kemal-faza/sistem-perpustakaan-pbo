@@ -33,7 +33,7 @@ perpustakaan-pbo/
 ├── src/
 │   ├── Main.java                          # Entry point program
 │   ├── model/
-│   │   ├── abstracts/
+│   │   ├── base/
 │   │   │   └── ItemPerpustakaan.java      # Abstract class untuk semua item
 │   │   ├── BukuFisik.java
 │   │   ├── BukuDigital.java

@@ -2,10 +2,12 @@ package collection;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import interfaces.Identifiable;
+import model.Kategori;
 import model.base.ItemPerpustakaan;
 import model.BukuFisik;
 import model.BukuDigital;
@@ -166,8 +168,15 @@ public class Repository<T extends Identifiable> {
                 .registerSubtype(BukuDigital.class, "Buku Digital")
                 .registerSubtype(Jurnal.class, "Jurnal");
 
+        // TypeAdapter untuk Kategori enum — handle backward compat
+        JsonDeserializer<Kategori> kategoriDeserializer = (json, type, ctx) -> {
+            String value = json.getAsString();
+            return Kategori.fromString(value);
+        };
+
         return new GsonBuilder()
-            .registerTypeAdapterFactory(typeFactory);
+            .registerTypeAdapterFactory(typeFactory)
+            .registerTypeAdapter(Kategori.class, kategoriDeserializer);
     }
 
     // === Utility ===

@@ -18,7 +18,7 @@ java -cp "out:lib/*" Main
 ## Build & Run (Windows CMD)
 ```batch
 REM Compile
-javac -cp "lib/*" -d out -sourcepath src srcMain.java
+javac -cp "lib/*" -d out -sourcepath src src\Main.java
 
 REM Run
 java -cp "out;lib/*" Main
@@ -37,18 +37,18 @@ java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --sc
 ## Test (Windows CMD)
 ```batch
 REM Compile tests
-dir /s /B test*.java > test_sources.txt
+dir /s /B test\*.java > test_sources.txt
 javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
 del test_sources.txt
 
 REM Run tests
-java -jar libjunit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
 ```
 
 ## Project Structure
 ```
 src/
-├── Main.java              — Entry point (not yet created)
+├── Main.java              — Entry point
 ├── model/                 — Domain classes
 │   ├── abstract/
 │   │   └── ItemPerpustakaan.java
@@ -58,31 +58,50 @@ src/
 │   ├── Anggota.java
 │   ├── Admin.java
 │   ├── Peminjaman.java
+│   ├── AddResult.java          — Enum hasil tambah buku
 │   └── StatusPeminjaman.java
 ├── interfaces/
 │   ├── Identifiable.java
 │   ├── IBorrowable.java
-│   └── ISearchable.java
+│   ├── ISearchable.java
+│   └── ILibraryService.java
 ├── collection/
 │   └── Repository.java
 ├── exception/
 │   ├── BukuTidakTersediaException.java
 │   ├── AnggotaTidakValidException.java
 │   ├── PeminjamanMelebihiBatasException.java
-│   └── BukuTidakDitemukanException.java
+│   ├── BukuTidakDitemukanException.java
+│   └── PeminjamanTidakDitemukanException.java
 ├── service/
-│   ├── PerpustakaanService.java
-│   └── AuthService.java
-└── ui/
-    ├── MenuManager.java   (not yet created)
-    ├── MenuAdmin.java     (not yet created)
-    └── MenuAnggota.java   (not yet created)
+│   ├── PerpustakaanService.java — Facade utama
+│   ├── BukuService.java        — CRUD buku & anggota
+│   ├── PeminjamanService.java  — Pinjam/kembalikan/denda
+│   └── AuthService.java        — Autentikasi
+├── ui/
+│   ├── MenuManager.java
+│   ├── MenuAdmin.java
+│   └── MenuAnggota.java
+└── util/
+    └── Config.java
+
+scripts/
+├── build.bat / build.sh        — Compile
+├── test.bat / test.sh          — Test
+└── test-download.sh            — Download JUnit
+
+test/
+└── unit/
+    ├── model/                  — 7 test classes
+    ├── collection/             — RepositoryTest
+    └── service/                — AuthServiceTest, PerpustakaanServiceTest
 
 data/
 ├── buku.json
 ├── anggota.json
 └── peminjaman.json
 ```
+
 
 ## Key Architectural Decisions
 

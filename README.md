@@ -1,12 +1,22 @@
-# Sistem Manajemen Perpustakaan
+# Widya — Sistem Manajemen Perpustakaan
 
 > **Tugas Besar Pemrograman Berorientasi Objek** — Universitas Diponegoro
 
+![Widya](https://img.shields.io/badge/Widya-v1.0-8B5CF6)
 ![Java](https://img.shields.io/badge/Java-17%2B-orange)
 ![Tests](https://img.shields.io/badge/Tests-108%20passed-green)
 ![CLI](https://img.shields.io/badge/Platform-CLI-blue)
 
-Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON dengan bantuan library Gson.
+```
+██╱▔▔▔▔██╱██╱██████╱██╱▔▔▔██╱██████╱
+██╱▔▔▔▔██╱██╱██▔▔▔██╱▔██╱██▔▔████╱
+██╱▔▔▔▔██╱██╱██▔▔▔██╱▔██╱███████╱
+██╱██████╱██╱██▔▔▔██╱▔▔██▔▔╱██▔▔▔██╱
+▔███▔████▔██╱██████▔██╱▔▔▔██╱██╱▔▔██╱
+▔▔▔▔▔▔▔▔▔▔▔▔╱▔▔╱▔▔▔▔▔▔▔▔╱▔▔▔▔▔▔▔▔▔▔▔╱▔▔╱▔▔➔▔▔╱
+```
+
+**Widya** (Sanskerta/Jawa Kawi: *pengetahuan*) adalah aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON dengan bantuan library Gson.
 
 ---
 

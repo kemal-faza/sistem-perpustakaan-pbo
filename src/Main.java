@@ -6,10 +6,19 @@ import ui.MenuAnggota;
 import ui.MenuManager;
 
 /**
- * Entry point aplikasi Sistem Manajemen Perpustakaan.
+ * Entry point aplikasi Widya — Sistem Manajemen Perpustakaan.
  * Menangani login flow dan dispatch ke menu admin/anggota.
  */
 public class Main {
+
+    private static void printWidyaBanner() {
+        System.out.println("██╗    ██╗██╗██████╗ ██╗   ██╗ █████╗ ");
+        System.out.println("██║    ██║██║██╔══██╗╚██╗ ██╔╝██╔══██╗");
+        System.out.println("██║ █╗ ██║██║██║  ██║ ╚████╔╝ ███████║");
+        System.out.println("██║███╗██║██║██║  ██║  ╚██╔╝  ██╔══██║");
+        System.out.println("╚███╔███╔╝██║██████╔╝   ██║   ██║  ██║");
+        System.out.println(" ╚══╝╚══╝ ╚═╝╚═════╝    ╚═╝   ╚═╝  ╚═╝");
+    }
 
     private static final String[] MENU_UTAMA = {
         "Keluar",
@@ -23,8 +32,9 @@ public class Main {
         // Load sample data jika database kosong
         boolean dataBaru = service.loadSampleData();
 
+        printWidyaBanner();
         System.out.println("\n" + "=".repeat(43));
-        System.out.println("  SISTEM MANAJEMEN PERPUSTAKAAN");
+        System.out.println("  WIDYA \u2014 Sistem Manajemen Perpustakaan");
         System.out.println("  Tugas Besar Pemrograman Berorientasi Objek");
         if (dataBaru) {
             System.out.println("  (Data sample berhasil dimuat)");

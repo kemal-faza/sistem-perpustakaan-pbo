@@ -2,17 +2,34 @@
 
 > **Tugas Besar Pemrograman Berorientasi Objek** — Universitas Diponegoro
 
-Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON.
+![Java](https://img.shields.io/badge/Java-17%2B-orange)
+![Tests](https://img.shields.io/badge/Tests-108%20passed-green)
+![CLI](https://img.shields.io/badge/Platform-CLI-blue)
 
+Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON dengan bantuan library Gson.
 
+---
 
-## ✨ Fitur
+## Daftar Isi
 
-| Fitur                              | Admin |   Anggota   |
+- [Fitur](#fitur)
+- [Panduan Cepat](#panduan-cepat)
+- [Format Input Data](#format-input-data)
+- [UML Class Diagram](#uml-class-diagram)
+- [Struktur Project](#struktur-project)
+- [Konsep OOP yang Diterapkan](#konsep-oop-yang-diterapkan)
+- [Dependencies](#dependencies)
+- [Author](#author)
+
+---
+
+## Fitur
+
+| Fitur                              | Admin | Anggota     |
 | ---------------------------------- | :---: | :---------: |
 | Login                              |  ✅   | ✅ (via ID) |
-| Tambah Buku (Fisik/Digital/Jurnal) |  ✅   |
-| Edit / Hapus Buku                  |  ✅   |
+| Tambah Buku (Fisik/Digital/Jurnal) |  ✅   |             |
+| Edit / Hapus Buku                  |  ✅   |             |
 | Lihat Semua Buku                   |  ✅   |             |
 | Cari Buku                          |  ✅   |     ✅      |
 | Manajemen Anggota                  |  ✅   |             |
@@ -23,7 +40,30 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 | Perpanjang Peminjaman              |       |     ✅      |
 | Data Persistent (JSON)             |  ✅   |     ✅      |
 
-## 📝 Format Input Data
+---
+
+## Panduan Cepat
+
+### Prerequisites
+
+- Java JDK 17+
+
+| Langkah              | Linux / macOS                                    | Windows CMD                                      |
+| -------------------- | ------------------------------------------------ | ------------------------------------------------ |
+| **Compile**          | `javac -cp "lib/*" -d out -sourcepath src src/Main.java` | `javac -cp "lib/*" -d out -sourcepath src src\Main.java` |
+| **Run**              | `java -cp "out:lib/*" Main`                     | `java -cp "out;lib/*" Main`                      |
+| **Compile + Run**    | `chmod +x scripts/build.sh && ./scripts/build.sh` | `scripts\build.bat`                              |
+| **Compile Tests**    | `javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java` | `dir /s /B test\*.java > test_sources.txt`<br>`javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt`<br>`del test_sources.txt` |
+| **Run Tests**        | `java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path` | `java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path` |
+
+> **Catatan:** Test dependencies (JUnit 5 + Mockito) perlu di-download terlebih dahulu. Jalankan `scripts/test-download.sh` (Linux/macOS) atau `scripts\test-download.bat` (Windows) sebelum menjalankan test.
+
+---
+
+## Format Input Data
+
+<details>
+<summary>Klik untuk melihat detail format input setiap tipe item</summary>
 
 ### Buku Fisik
 
@@ -31,7 +71,7 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 | -------------- | --------------------- | :----: | -------------------------------- |
 | Judul          | String                |   ✅   | "Pemrograman Berorientasi Objek" |
 | Tahun Terbit   | Angka positif         |   ✅   | 2024                             |
-| Kategori       | Pilih dari menu (1-8) |   ✅   | Teknologi, Ilmiah, Fiksi, ...    |
+| Kategori       | Pilih dari menu (1-8) |   ✅   | Teknologi, Ilmiah, Fiksi         |
 | Penulis        | String                |   ✅   | "Rosa A.S."                      |
 | Penerbit       | String                |        | "Informatika"                    |
 | Jumlah Halaman | Angka positif         |   ✅   | 350                              |
@@ -66,8 +106,11 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 - Contoh valid: `A1-01`, `B2-15`, `C3-100`
 - Contoh tidak valid: `a1` (huruf kecil), `A-1` (tanpa nomor rak), `deket pintu`
 
+</details>
 
-## 🧩 UML Class Diagram
+---
+
+## UML Class Diagram
 
 ```mermaid
 classDiagram
@@ -79,6 +122,11 @@ classDiagram
         DIPINJAM
         DIKEMBALIKAN
         TERLAMBAT
+    }
+    class AddResult {
+        <<enumeration>>
+        BARU
+        STOK
     }
 
     %% ── INTERFACES ──
@@ -95,6 +143,13 @@ classDiagram
     class ISearchable {
         <<interface>>
         + cocok(String keyword) boolean
+    }
+    class ILibraryService {
+        <<interface>>
+        + loginAdmin() boolean
+        + pinjamBuku() void
+        + getAllBuku() List
+        + ...
     }
 
     %% ── ABSTRACT CLASS ──
@@ -155,7 +210,7 @@ classDiagram
         - LocalDate tanggalDikembalikan
         - StatusPeminjaman status
         - double denda
-        + hitungDenda() double
+        + hitungHariTerlambat() int
         + perpanjang() void
         + kembalikan() int
     }
@@ -171,21 +226,45 @@ classDiagram
         + getAll() List~T~
         + saveToJson() boolean
         + loadFromJson() void
-        + generateId() String
+        + generateId(String) String
     }
 
     class PerpustakaanService {
-        - Repository bukuRepo
-        - Repository anggotaRepo
-        - Repository peminjamanRepo
-        - Object currentUser
+        - Repository repoBuku
+        - Repository repoAnggota
+        - Repository repoPeminjaman
+        - Admin currentAdmin
+        - Anggota currentAnggota
+        - AuthService authService
+        - BukuService bukuService
+        - PeminjamanService peminjamanService
         + getInstance()$ PerpustakaanService
-        + login(String,String) boolean
-        + tambahBuku() void
-        + cariBuku() List
+        + loginAdmin() boolean
+        + tambahBuku() AddResult
         + pinjamBuku() void
         + kembalikanBuku() Peminjaman
-        + getRiwayat() List
+    }
+    class BukuService {
+        - Repository repoBuku
+        - Repository repoAnggota
+        + tambahBuku() AddResult
+        + cariBuku() List
+        + getAllBuku() List
+    }
+    class PeminjamanService {
+        - Repository repoBuku
+        - Repository repoAnggota
+        - Repository repoPeminjaman
+        + pinjamBuku() void
+        + kembalikanBuku() Peminjaman
+        + perpanjangPeminjaman() void
+    }
+
+    class AuthService {
+        - Repository repoAnggota
+        - Admin admin
+        + validateAdmin() boolean
+        + loginAnggota() Anggota
     }
 
     class MenuManager {
@@ -207,6 +286,7 @@ classDiagram
     class AnggotaTidakValidException
     class PeminjamanMelebihiBatasException
     class BukuTidakDitemukanException
+    class PeminjamanTidakDitemukanException
 
     %% ── RELATIONSHIPS ──
     ItemPerpustakaan ..|> Identifiable
@@ -224,7 +304,15 @@ classDiagram
     Peminjaman --> ItemPerpustakaan : idItem
     Peminjaman --> StatusPeminjaman
 
+    PerpustakaanService o-- BukuService
+    PerpustakaanService o-- PeminjamanService
+    PerpustakaanService o-- AuthService
     PerpustakaanService --> Repository : mengelola
+
+    BukuService --> Repository
+    PeminjamanService --> Repository
+    AuthService --> Repository
+
     Config --> Admin : credential
 
     MenuAdmin --|> MenuManager
@@ -234,10 +322,12 @@ classDiagram
     AnggotaTidakValidException --|> Exception
     PeminjamanMelebihiBatasException --|> Exception
     BukuTidakDitemukanException --|> Exception
-
+    PeminjamanTidakDitemukanException --|> Exception
 ```
-## 📁 Struktur Project
 
+---
+
+## Struktur Project
 
 ```
 perpustakaan-pbo/
@@ -304,74 +394,9 @@ perpustakaan-pbo/
 └── README.md
 ```
 
-
-## 🚀 Cara Menjalankan
-
-### Prerequisites
-- Java JDK 17+
-- Tidak perlu IDE — cukup terminal
-
-### Compile (Linux/macOS)
-```bash
-javac -cp "lib/*" -d out -sourcepath src src/Main.java
-```
-
-### Compile (Windows CMD)
-```batch
-javac -cp "lib/*" -d out -sourcepath src src\Main.java
-```
-
-### Run (Linux/macOS)
-```bash
-java -cp "out:lib/*" Main
-```
-
-### Run (Windows CMD)
-```batch
-java -cp "out;lib/*" Main
-```
-
-### Build Scripts (Alternatif)
-
-Linux/macOS:
-```bash
-chmod +x scripts/build.sh && ./scripts/build.sh
-# Run
-java -cp "out:lib/*" Main
-```
-
-Windows:
-```batch
-scripts\build.bat
-REM Run
-java -cp "out;lib/*" Main
-```
-
-### Compile Tests (Linux/macOS)
-Requires JUnit standalone jar. Run `scripts/test-download.sh` first.
-```bash
-# Compile tests
-javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
-
-# Run tests
-java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path
-```
-
-### Compile Tests (Windows CMD)
-```batch
-REM Download test deps first: scripts\test-download.bat
-REM Compile tests
-dir /s /B test\*.java > test_sources.txt
-javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
-del test_sources.txt
-
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
-
 ---
-## 🔐 Login
 
+## Login
 
 ### Admin
 
@@ -380,47 +405,59 @@ java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --sc
 
 ### Anggota (Sample Data)
 
-|  ID  | Nama         | Pinjaman |
+| ID   | Nama         | Pinjaman |
 | :--: | ------------ | :------: |
 | A001 | Budi Santoso |   0/3    |
 | A002 | Siti Rahayu  |   0/3    |
 | A003 | Ahmad Fauzi  |   0/3    |
 
-## 🧠 Konsep OOP yang Diterapkan
+---
 
-| # | Konsep | Status |
-|---|--------|:-----:|
-| 1 | Class & Object | ✅ |
-| 2 | Constructor (default + overloading) | ✅ |
-| 3 | Enkapsulasi (private + getter/setter) | ✅ |
-| 4 | Inheritance (single + hierarchical) | ✅ |
-| 5 | Abstract Class & Abstract Method | ✅ |
-| 6 | Interface & Implements Multiple Interface | ✅ |
-| 7 | Method Overriding & Overloading | ✅ |
-| 8 | Polymorphism (Inclusion via List) | ✅ |
-| 9 | Generic Class + Bounded Generic | ✅ |
-| 10 | Collection (ArrayList, Stream API) | ✅ |
-| 11 | Exception Handling & Custom Exception | ✅ |
-| 12 | Association, Composition, Aggregation | ✅ |
-| 13 | super, this, final, static | ✅ |
-| 14 | Singleton Pattern, Enum | ✅ |
-| 15 | Persistent Object (JSON + Gson) | ✅ |
-| 16 | Message Passing (Main → Service → Repository) | ✅ |
-| **Total** | **32 konsep** | **✅** |
+## Konsep OOP yang Diterapkan
 
+| #  | Konsep                               | Status |
+| -- | ------------------------------------ | :----: |
+| 1  | Class & Object                       |   ✅   |
+| 2  | Constructor (default + overloading)  |   ✅   |
+| 3  | Enkapsulasi (private + getter/setter)|   ✅   |
+| 4  | Inheritance (single + hierarchical)  |   ✅   |
+| 5  | Abstract Class & Abstract Method     |   ✅   |
+| 6  | Interface & Implements Multiple      |   ✅   |
+| 7  | Method Overriding & Overloading      |   ✅   |
+| 8  | Polymorphism (Inclusion via List)    |   ✅   |
+| 9  | Generic Class + Bounded Generic      |   ✅   |
+| 10 | Collection (ArrayList, Stream API)   |   ✅   |
+| 11 | Exception Handling & Custom Exception|   ✅   |
+| 12 | Association, Composition, Aggregation|   ✅   |
+| 13 | super, this, final, static           |   ✅   |
+| 14 | Singleton Pattern, Enum              |   ✅   |
+| 15 | Persistent Object (JSON + Gson)      |   ✅   |
+| 16 | Message Passing (Main ke Service)    |   ✅   |
+| 17 | Dependency Injection (via interface) |   ✅   |
+| 18 | Facade Pattern (PerpustakaanService) |   ✅   |
+| 19 | JSON Polymorphic Deserialization     |   ✅   |
+| 20 | Thread-Safe Singleton (synchronized) |   ✅   |
+| **Total** | **20 konsep**                   | **✅** |
 
-## 📦 Dependencies
+---
+
+## Dependencies
 
 | Library | Versi | Penggunaan |
 |---------|-------|------------|
-| [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi/deserialisasi JSON |
-| [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk inheritance |
+| [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi / deserialisasi JSON |
+| [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk RuntimeTypeAdapterFactory |
+| [JUnit 5](https://junit.org/junit5/) | 5.10.1 | Unit testing (108 test cases) |
+| [Mockito](https://site.mockito.org/) | 5.7.0 | Test mocking (ByteBuddy + Objenesis) |
 
+---
 
-## 📝 Author
+## Author
 
 - **Nama:** [@kemal](https://github.com/kemal-faza)
 - **Mata Kuliah:** Pemrograman Berorientasi Objek
 - **Institusi:** Universitas Diponegoro
+
+---
 
 *Project ini dibuat sebagai tugas besar mata kuliah Pemrograman Berorientasi Objek.*

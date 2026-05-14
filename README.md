@@ -4,73 +4,68 @@
 
 Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON.
 
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
+
 
 ## ✨ Fitur
 
-| Fitur | Admin | Anggota |
-|-------|:-----:|:-------:|
-| Login | ✅ | ✅ (via ID) |
-| Tambah Buku (Fisik/Digital/Jurnal) | ✅ | |
-| Edit / Hapus Buku | ✅ | |
-| Lihat Semua Buku | ✅ | |
-| Cari Buku | ✅ | ✅ |
-| Manajemen Anggota | ✅ | |
-| Laporan Peminjaman + Denda | ✅ | |
-| Pinjam Buku | | ✅ |
-| Kembalikan Buku (auto denda) | | ✅ |
-| Riwayat Peminjaman | | ✅ |
-| Perpanjang Peminjaman | | ✅ |
-| Data Persistent (JSON) | ✅ | ✅ |
-
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
+| Fitur                              | Admin |   Anggota   |
+| ---------------------------------- | :---: | :---------: |
+| Login                              |  ✅   | ✅ (via ID) |
+| Tambah Buku (Fisik/Digital/Jurnal) |  ✅   |
+| Edit / Hapus Buku                  |  ✅   |
+| Lihat Semua Buku                   |  ✅   |             |
+| Cari Buku                          |  ✅   |     ✅      |
+| Manajemen Anggota                  |  ✅   |             |
+| Laporan Peminjaman + Denda         |  ✅   |             |
+| Pinjam Buku                        |       |     ✅      |
+| Kembalikan Buku (auto denda)       |       |     ✅      |
+| Riwayat Peminjaman                 |       |     ✅      |
+| Perpanjang Peminjaman              |       |     ✅      |
+| Data Persistent (JSON)             |  ✅   |     ✅      |
 
 ## 📝 Format Input Data
 
 ### Buku Fisik
-| Field | Tipe | Wajib? | Contoh |
-|-------|------|:------:|--------|
-| Judul | String | ✅ | "Pemrograman Berorientasi Objek" |
-| Tahun Terbit | Angka positif | ✅ | 2024 |
-| Kategori | Pilih dari menu (1-8) | ✅ | Teknologi, Ilmiah, Fiksi, ... |
-| Penulis | String | ✅ | "Rosa A.S." |
-| Penerbit | String | | "Informatika" |
-| Jumlah Halaman | Angka positif | ✅ | 350 |
-| Lokasi Rak | Format `[A]\d+-\d+` | ✅ | `A1-01`, `B2-15` |
-| Jumlah Stok | Angka positif | ✅ | 3 |
+
+| Field          | Tipe                  | Wajib? | Contoh                           |
+| -------------- | --------------------- | :----: | -------------------------------- |
+| Judul          | String                |   ✅   | "Pemrograman Berorientasi Objek" |
+| Tahun Terbit   | Angka positif         |   ✅   | 2024                             |
+| Kategori       | Pilih dari menu (1-8) |   ✅   | Teknologi, Ilmiah, Fiksi, ...    |
+| Penulis        | String                |   ✅   | "Rosa A.S."                      |
+| Penerbit       | String                |        | "Informatika"                    |
+| Jumlah Halaman | Angka positif         |   ✅   | 350                              |
+| Lokasi Rak     | Format `[A]\d+-\d+`   |   ✅   | `A1-01`, `B2-15`                 |
+| Jumlah Stok    | Angka positif         |   ✅   | 3                                |
 
 ### Buku Digital
-| Field | Tipe | Wajib? | Contoh |
-|-------|------|:------:|--------|
-| Judul | String | ✅ | "Belajar Java dalam Sehari" |
-| Tahun Terbit | Angka positif | ✅ | 2024 |
-| Kategori | Pilih dari menu | ✅ | Teknologi |
-| Penulis | String | ✅ | "Budi Raharjo" |
-| Penerbit | String | | "E-Book Publisher" |
-| Ukuran File | Angka desimal (MB) | ✅ | 5.2 |
-| Format | String | ✅ | PDF |
+
+| Field        | Tipe               | Wajib? | Contoh                      |
+| ------------ | ------------------ | :----: | --------------------------- |
+| Judul        | String             |   ✅   | "Belajar Java dalam Sehari" |
+| Tahun Terbit | Angka positif      |   ✅   | 2024                        |
+| Kategori     | Pilih dari menu    |   ✅   | Teknologi                   |
+| Penulis      | String             |   ✅   | "Budi Raharjo"              |
+| Penerbit     | String             |        | "E-Book Publisher"          |
+| Ukuran File  | Angka desimal (MB) |   ✅   | 5.2                         |
+| Format       | String             |   ✅   | PDF                         |
 
 ### Jurnal
-| Field | Tipe | Wajib? | Contoh |
-|-------|------|:------:|--------|
-| ... | (sama: judul, tahun, kategori, penulis, penerbit) | | |
-| Volume | Angka positif | ✅ | 12 |
-| Nomor | Angka positif | ✅ | 1 |
-| Bidang Ilmu | String | | "Ilmu Komputer" |
-| Jumlah Stok | Angka positif | ✅ | 2 |
+
+| Field       | Tipe                                              | Wajib? | Contoh          |
+| ----------- | ------------------------------------------------- | :----: | --------------- |
+| ...         | (sama: judul, tahun, kategori, penulis, penerbit) |        |                 |
+| Volume      | Angka positif                                     |   ✅   | 12              |
+| Nomor       | Angka positif                                     |   ✅   | 1               |
+| Bidang Ilmu | String                                            |        | "Ilmu Komputer" |
+| Jumlah Stok | Angka positif                                     |   ✅   | 2               |
 
 ### Format Lokasi Rak
+
 - **Pola:** `[Huruf Lantai][Nomor Rak]-[Slot]`
 - Contoh valid: `A1-01`, `B2-15`, `C3-100`
 - Contoh tidak valid: `a1` (huruf kecil), `A-1` (tanpa nomor rak), `deket pintu`
 
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
 
 ## 🧩 UML Class Diagram
 
@@ -239,20 +234,17 @@ classDiagram
     AnggotaTidakValidException --|> Exception
     PeminjamanMelebihiBatasException --|> Exception
     BukuTidakDitemukanException --|> Exception
-```
 
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
 ```
-
 ## 📁 Struktur Project
+
 
 ```
 perpustakaan-pbo/
 ├── src/
-│   ├── Main.java
-│   ├── model/
-│   │   ├── base/
+│   ├── Main.java              — Entry point
+│   ├── model/                 — Domain classes
+│   │   ├── abstract/
 │   │   │   └── ItemPerpustakaan.java
 │   │   ├── BukuFisik.java
 │   │   ├── BukuDigital.java
@@ -260,27 +252,44 @@ perpustakaan-pbo/
 │   │   ├── Anggota.java
 │   │   ├── Admin.java
 │   │   ├── Peminjaman.java
+│   │   ├── AddResult.java          — Enum hasil tambah buku
 │   │   └── StatusPeminjaman.java
 │   ├── interfaces/
 │   │   ├── Identifiable.java
 │   │   ├── IBorrowable.java
-│   │   └── ISearchable.java
+│   │   ├── ISearchable.java
+│   │   └── ILibraryService.java
 │   ├── collection/
 │   │   └── Repository.java
 │   ├── exception/
 │   │   ├── BukuTidakTersediaException.java
 │   │   ├── AnggotaTidakValidException.java
 │   │   ├── PeminjamanMelebihiBatasException.java
-│   │   └── BukuTidakDitemukanException.java
+│   │   ├── BukuTidakDitemukanException.java
+│   │   └── PeminjamanTidakDitemukanException.java
 │   ├── service/
-│   │   ├── PerpustakaanService.java
-│   │   └── AuthService.java
+│   │   ├── PerpustakaanService.java — Facade utama
+│   │   ├── BukuService.java        — CRUD buku & anggota
+│   │   ├── PeminjamanService.java  — Pinjam/kembalikan/denda
+│   │   └── AuthService.java        — Autentikasi
 │   ├── ui/
 │   │   ├── MenuManager.java
 │   │   ├── MenuAdmin.java
 │   │   └── MenuAnggota.java
 │   └── util/
 │       └── Config.java
+│
+├── scripts/
+│   ├── build.bat / build.sh     — Compile
+│   ├── test.bat / test.sh       — Test
+│   └── test-download.sh         — Download JUnit
+│
+├── test/
+│   └── unit/
+│       ├── model/               — 7 test classes
+│       ├── collection/          — RepositoryTest
+│       └── service/             — AuthServiceTest, PerpustakaanServiceTest
+│
 ├── data/
 │   ├── buku.json
 │   ├── anggota.json
@@ -288,7 +297,7 @@ perpustakaan-pbo/
 ├── lib/
 │   ├── gson-2.10.1.jar
 │   └── gson-extras-2.13.2-rc1.jar
-├── config.properties.example
+├── config.properties / config.properties.example
 ├── .gitignore
 ├── AGENTS.md
 ├── PLAN.md
@@ -361,24 +370,21 @@ java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --sc
 ```
 
 ---
-
-
 ## 🔐 Login
 
+
 ### Admin
+
 - **Username:** `admin`
 - **Password:** lihat `config.properties` (copy dari `config.properties.example` jika belum ada)
 
 ### Anggota (Sample Data)
-| ID | Nama | Pinjaman |
-|:--:|------|:--------:|
-| A001 | Budi Santoso | 0/3 |
-| A002 | Siti Rahayu | 0/3 |
-| A003 | Ahmad Fauzi | 0/3 |
 
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
+|  ID  | Nama         | Pinjaman |
+| :--: | ------------ | :------: |
+| A001 | Budi Santoso |   0/3    |
+| A002 | Siti Rahayu  |   0/3    |
+| A003 | Ahmad Fauzi  |   0/3    |
 
 ## 🧠 Konsep OOP yang Diterapkan
 
@@ -410,18 +416,11 @@ java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --sc
 | [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi/deserialisasi JSON |
 | [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk inheritance |
 
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
 
 ## 📝 Author
 
 - **Nama:** [@kemal](https://github.com/kemal-faza)
 - **Mata Kuliah:** Pemrograman Berorientasi Objek
 - **Institusi:** Universitas Diponegoro
-
-REM Run tests
-java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
-```
 
 *Project ini dibuat sebagai tugas besar mata kuliah Pemrograman Berorientasi Objek.*

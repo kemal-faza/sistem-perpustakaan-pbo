@@ -23,7 +23,7 @@ public interface ILibraryService {
     Anggota getCurrentAnggota();
 
     // ========== MANAJEMEN BUKU ==========
-    String tambahBuku(ItemPerpustakaan item);
+    AddResult tambahBuku(ItemPerpustakaan item);
     void hapusBuku(String idBuku) throws BukuTidakDitemukanException;
     List<ItemPerpustakaan> cariBuku(String keyword);
     List<ItemPerpustakaan> getAllBuku();
@@ -39,9 +39,9 @@ public interface ILibraryService {
         throws BukuTidakDitemukanException, AnggotaTidakValidException,
                BukuTidakTersediaException, PeminjamanMelebihiBatasException;
     Peminjaman kembalikanBuku(String idPeminjaman)
-        throws BukuTidakDitemukanException, AnggotaTidakValidException, IllegalStateException;
+        throws PeminjamanTidakDitemukanException, BukuTidakDitemukanException, AnggotaTidakValidException, IllegalStateException;
     void perpanjangPeminjaman(String idPeminjaman)
-        throws BukuTidakDitemukanException, IllegalStateException;
+        throws PeminjamanTidakDitemukanException, IllegalStateException;
     List<Peminjaman> getRiwayatPeminjaman(String idAnggota);
     List<Peminjaman> getPeminjamanAktif();
     List<Peminjaman> getAllPeminjaman();

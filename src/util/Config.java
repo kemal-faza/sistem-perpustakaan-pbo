@@ -36,10 +36,9 @@ public class Config {
         }
 
         if (!loaded) {
-            System.err.println("FATAL: config.properties tidak ditemukan!");
-            System.err.println("Copy config.properties.example menjadi config.properties");
-            System.err.println("dan sesuaikan nilainya sebelum menjalankan aplikasi.");
-            System.exit(1);
+            throw new RuntimeException("FATAL: config.properties tidak ditemukan!\n"
+                + "Copy config.properties.example menjadi config.properties\n"
+                + "dan sesuaikan nilainya sebelum menjalankan aplikasi.");
         }
     }
 

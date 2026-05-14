@@ -102,8 +102,8 @@ public class MenuAdmin extends MenuManager {
         ItemPerpustakaan item = promptDetailTipe(tipe, id, judul, tahun, kategori, penulis, penerbit);
         if (item == null) return;
 
-        String hasil = service.tambahBuku(item);
-        if (hasil.equals("stok")) {
+        AddResult hasil = service.tambahBuku(item);
+        if (hasil == AddResult.STOK) {
             cetakSukses("Stok item '" + judul + "' berhasil ditambahkan.");
         } else {
             cetakSukses("Item '" + judul + "' berhasil ditambahkan (ID: " + id + ").");

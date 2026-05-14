@@ -144,7 +144,7 @@ public class MenuAnggota extends MenuManager {
             } else {
                 cetakSukses("Buku berhasil dikembalikan tepat waktu. Tidak ada denda.");
             }
-        } catch (BukuTidakDitemukanException | AnggotaTidakValidException | IllegalStateException e) {
+        } catch (PeminjamanTidakDitemukanException | BukuTidakDitemukanException | AnggotaTidakValidException | IllegalStateException e) {
             cetakError(e.getMessage());
         }
     }
@@ -246,7 +246,7 @@ public class MenuAnggota extends MenuManager {
         try {
             service.perpanjangPeminjaman(idPeminjaman);
             cetakSukses("Peminjaman #" + idPeminjaman + " diperpanjang 3 hari.");
-        } catch (BukuTidakDitemukanException | IllegalStateException e) {
+        } catch (PeminjamanTidakDitemukanException | IllegalStateException e) {
             cetakError(e.getMessage());
         }
     }

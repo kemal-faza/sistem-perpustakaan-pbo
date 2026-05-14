@@ -5,3 +5,16 @@ out/
 .vscode/
 reference/
 config.properties
+
+# Agent artifacts
+.sisyphus/
+
+# Test library jars (download via script/test-download.sh)
+lib/junit-*.jar
+lib/mockito-*.jar
+lib/byte-buddy-*.jar
+lib/objenesis-*.jar
+lib/opentest4j-*.jar
+
+# Test data (auto-generated)
+data/peminjaman.json

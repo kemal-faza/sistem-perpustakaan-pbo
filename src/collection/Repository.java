@@ -35,6 +35,8 @@ public class Repository<T extends Identifiable> {
     private ArrayList<T> items;
     private String filePath;
     private Type typeToken;
+    private final Gson gson;
+    private final Gson prettyGson;
 
     /**
      * Constructor repository.
@@ -45,6 +47,8 @@ public class Repository<T extends Identifiable> {
         this.items = new ArrayList<>();
         this.filePath = filePath;
         this.typeToken = typeToken;
+        this.gson = createGson().create();
+        this.prettyGson = createGson().setPrettyPrinting().create();
         loadFromJson();
     }
 
@@ -127,9 +131,8 @@ public class Repository<T extends Identifiable> {
 
     /** Menyimpan data ke file JSON */
     public boolean saveToJson() {
-        Gson gson = createGson().setPrettyPrinting().create();
         try (Writer writer = new FileWriter(filePath)) {
-            gson.toJson(items, writer);
+            prettyGson.toJson(items, writer);
             return true;
         } catch (IOException e) {
             System.err.println("Gagal menyimpan ke " + filePath + ": " + e.getMessage());
@@ -145,7 +148,6 @@ public class Repository<T extends Identifiable> {
             return;
         }
 
-        com.google.gson.Gson gson = createGson().create();
         try (Reader reader = new FileReader(file)) {
             items = gson.fromJson(reader, typeToken);
             if (items == null) {

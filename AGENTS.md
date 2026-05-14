@@ -6,13 +6,43 @@
 - CLI (terminal-based, no GUI)
 - JSON file persistence
 
-## Build & Run
+## Build & Run (Linux/macOS)
 ```bash
 # Compile
-javac -cp "lib/*" -d out -sourcepath src src/**/*.java
+javac -cp "lib/*" -d out -sourcepath src src/Main.java
 
 # Run
 java -cp "out:lib/*" Main
+```
+
+## Build & Run (Windows CMD)
+```batch
+REM Compile
+javac -cp "lib/*" -d out -sourcepath src srcMain.java
+
+REM Run
+java -cp "out;lib/*" Main
+```
+
+## Test (Linux/macOS)
+Requires JUnit standalone jar. Run `scripts/test-download.sh` first.
+```bash
+# Compile tests
+javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
+
+# Run tests
+java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path
+```
+
+## Test (Windows CMD)
+```batch
+REM Compile tests
+dir /s /B test*.java > test_sources.txt
+javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
+del test_sources.txt
+
+REM Run tests
+java -jar libjunit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
 ```
 
 ## Project Structure

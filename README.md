@@ -4,7 +4,9 @@
 
 Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON.
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## ✨ Fitur
 
@@ -23,7 +25,9 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 | Perpanjang Peminjaman | | ✅ |
 | Data Persistent (JSON) | ✅ | ✅ |
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## 📝 Format Input Data
 
@@ -64,7 +68,9 @@ Aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, p
 - Contoh valid: `A1-01`, `B2-15`, `C3-100`
 - Contoh tidak valid: `a1` (huruf kecil), `A-1` (tanpa nomor rak), `deket pintu`
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## 🧩 UML Class Diagram
 
@@ -235,7 +241,9 @@ classDiagram
     BukuTidakDitemukanException --|> Exception
 ```
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## 📁 Struktur Project
 
@@ -287,7 +295,6 @@ perpustakaan-pbo/
 └── README.md
 ```
 
----
 
 ## 🚀 Cara Menjalankan
 
@@ -295,17 +302,66 @@ perpustakaan-pbo/
 - Java JDK 17+
 - Tidak perlu IDE — cukup terminal
 
-### Compile
+### Compile (Linux/macOS)
 ```bash
-javac -cp "lib/*" -d out -sourcepath src src/**/*.java
+javac -cp "lib/*" -d out -sourcepath src src/Main.java
 ```
 
-### Run
+### Compile (Windows CMD)
+```batch
+javac -cp "lib/*" -d out -sourcepath src src\Main.java
+```
+
+### Run (Linux/macOS)
 ```bash
 java -cp "out:lib/*" Main
 ```
 
+### Run (Windows CMD)
+```batch
+java -cp "out;lib/*" Main
+```
+
+### Build Scripts (Alternatif)
+
+Linux/macOS:
+```bash
+chmod +x scripts/build.sh && ./scripts/build.sh
+# Run
+java -cp "out:lib/*" Main
+```
+
+Windows:
+```batch
+scripts\build.bat
+REM Run
+java -cp "out;lib/*" Main
+```
+
+### Compile Tests (Linux/macOS)
+Requires JUnit standalone jar. Run `scripts/test-download.sh` first.
+```bash
+# Compile tests
+javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
+
+# Run tests
+java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path
+```
+
+### Compile Tests (Windows CMD)
+```batch
+REM Download test deps first: scripts\test-download.bat
+REM Compile tests
+dir /s /B test\*.java > test_sources.txt
+javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
+del test_sources.txt
+
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
+
 ---
+
 
 ## 🔐 Login
 
@@ -320,7 +376,9 @@ java -cp "out:lib/*" Main
 | A002 | Siti Rahayu | 0/3 |
 | A003 | Ahmad Fauzi | 0/3 |
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## 🧠 Konsep OOP yang Diterapkan
 
@@ -344,7 +402,6 @@ java -cp "out:lib/*" Main
 | 16 | Message Passing (Main → Service → Repository) | ✅ |
 | **Total** | **32 konsep** | **✅** |
 
----
 
 ## 📦 Dependencies
 
@@ -353,7 +410,9 @@ java -cp "out:lib/*" Main
 | [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi/deserialisasi JSON |
 | [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk inheritance |
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 ## 📝 Author
 
@@ -361,6 +420,8 @@ java -cp "out:lib/*" Main
 - **Mata Kuliah:** Pemrograman Berorientasi Objek
 - **Institusi:** Universitas Diponegoro
 
----
+REM Run tests
+java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path
+```
 
 *Project ini dibuat sebagai tugas besar mata kuliah Pemrograman Berorientasi Objek.*

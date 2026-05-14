@@ -8,14 +8,13 @@
 ![CLI](https://img.shields.io/badge/Platform-CLI-blue)
 
 ```
-██╱▔▔▔▔██╱██╱██████╱██╱▔▔▔██╱██████╱
-██╱▔▔▔▔██╱██╱██▔▔▔██╱▔██╱██▔▔████╱
-██╱▔▔▔▔██╱██╱██▔▔▔██╱▔██╱███████╱
-██╱██████╱██╱██▔▔▔██╱▔▔██▔▔╱██▔▔▔██╱
-▔███▔████▔██╱██████▔██╱▔▔▔██╱██╱▔▔██╱
-▔▔▔▔▔▔▔▔▔▔▔▔╱▔▔╱▔▔▔▔▔▔▔▔╱▔▔▔▔▔▔▔▔▔▔▔╱▔▔╱▔▔➔▔▔╱
+██╗    ██╗██╗██████╗ ██╗   ██╗ █████╗ 
+██║    ██║██║██╔══██╗╚██╗ ██╔╝██╔══██╗
+██║ █╗ ██║██║██║  ██║ ╚████╔╝ ███████║
+██║███╗██║██║██║  ██║  ╚██╔╝  ██╔══██║
+╚███╔███╔╝██║██████╔╝   ██║   ██║  ██║
+ ╚══╝╚══╝ ╚═╝╚═════╝    ╚═╝   ╚═╝  ╚═╝
 ```
-
 **Widya** (Sanskerta/Jawa Kawi: *pengetahuan*) adalah aplikasi CLI berbasis Java untuk manajemen perpustakaan: kelola buku, anggota, peminjaman, dan denda otomatis. Data tersimpan dalam format JSON dengan bantuan library Gson.
 
 ---

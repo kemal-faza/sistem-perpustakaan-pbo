@@ -5,7 +5,7 @@
 # ============================================
 
 echo "Compiling main source..."
-javac -cp "lib/*" -d out -sourcepath src src/Main.java
+javac -encoding UTF-8 -cp "lib/*" -d out -sourcepath src src/Main.java
 
 if [ $? -ne 0 ]; then
     echo "Compilation failed!"

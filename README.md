@@ -59,10 +59,10 @@
 
 | Langkah              | Linux / macOS                                    | Windows CMD                                      |
 | -------------------- | ------------------------------------------------ | ------------------------------------------------ |
-| **Compile**          | `javac -cp "lib/*" -d out -sourcepath src src/Main.java` | `javac -cp "lib/*" -d out -sourcepath src src\Main.java` |
+| **Compile**          | `javac -encoding UTF-8 -cp "lib/*" -d out -sourcepath src src/Main.java` | `javac -encoding UTF-8 -cp "lib/*" -d out -sourcepath src src\Main.java` |
 | **Run**              | `java -cp "out:lib/*" Main`                     | `java -cp "out;lib/*" Main`                      |
 | **Compile + Run**    | `chmod +x scripts/build.sh && ./scripts/build.sh` | `scripts\build.bat`                              |
-| **Compile Tests**    | `javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java` | `dir /s /B test\*.java > test_sources.txt`<br>`javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt`<br>`del test_sources.txt` |
+| **Compile Tests**    | `javac -encoding UTF-8 -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java` | `dir /s /B test\*.java > test_sources.txt`<br>`javac -encoding UTF-8 -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt`<br>`del test_sources.txt` |
 | **Run Tests**        | `java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path` | `java -jar lib\junit-platform-console-standalone-1.10.1.jar --cp "out;lib/*" --scan-class-path` |
 
 > **Catatan:** Test dependencies (JUnit 5 + Mockito) perlu di-download terlebih dahulu. Jalankan `scripts/test-download.sh` (Linux/macOS) atau `scripts\test-download.bat` (Windows) sebelum menjalankan test.

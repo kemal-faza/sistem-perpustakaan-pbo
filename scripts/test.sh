@@ -5,7 +5,7 @@
 # ============================================
 
 echo "Compiling tests..."
-javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
+javac -encoding UTF-8 -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
 
 if [ $? -ne 0 ]; then
     echo "Test compilation failed!"

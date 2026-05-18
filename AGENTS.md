@@ -9,7 +9,7 @@
 ## Build & Run (Linux/macOS)
 ```bash
 # Compile
-javac -cp "lib/*" -d out -sourcepath src src/Main.java
+javac -encoding UTF-8 -cp "lib/*" -d out -sourcepath src src/Main.java
 
 # Run
 java -cp "out:lib/*" Main
@@ -18,7 +18,7 @@ java -cp "out:lib/*" Main
 ## Build & Run (Windows CMD)
 ```batch
 REM Compile
-javac -cp "lib/*" -d out -sourcepath src src\Main.java
+javac -encoding UTF-8 -cp "lib/*" -d out -sourcepath src src\Main.java
 
 REM Run
 java -cp "out;lib/*" Main
@@ -28,7 +28,7 @@ java -cp "out;lib/*" Main
 Requires JUnit standalone jar. Run `scripts/test-download.sh` first.
 ```bash
 # Compile tests
-javac -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
+javac -encoding UTF-8 -cp "lib/*:out" -d out -sourcepath src:test test/unit/service/*.java test/unit/collection/*.java test/unit/model/*.java
 
 # Run tests
 java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path
@@ -38,7 +38,7 @@ java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --sc
 ```batch
 REM Compile tests
 dir /s /B test\*.java > test_sources.txt
-javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
+javac -encoding UTF-8 -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
 del test_sources.txt
 
 REM Run tests

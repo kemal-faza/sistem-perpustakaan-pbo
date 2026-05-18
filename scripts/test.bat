@@ -6,7 +6,7 @@ REM ============================================
 
 echo Compiling tests...
 dir /s /B test\*.java > test_sources.txt
-javac -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
+javac -encoding UTF-8 -cp "lib/*;out" -d out -sourcepath "src;test" @test_sources.txt
 del test_sources.txt
 
 IF %ERRORLEVEL% NEQ 0 (

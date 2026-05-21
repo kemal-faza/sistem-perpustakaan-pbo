@@ -8,6 +8,7 @@ config.properties
 
 # Agent artifacts
 .sisyphus/
+.antigravitycli/
 
 # Test library jars (download via script/test-download.sh)
 lib/junit-*.jar

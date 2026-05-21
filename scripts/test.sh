@@ -13,4 +13,4 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Running tests..."
-java -jar lib/junit-platform-console-standalone-1.10.1.jar --cp "out:lib/*" --scan-class-path
+java -cp "lib/*:out" org.junit.platform.console.ConsoleLauncher --scan-class-path

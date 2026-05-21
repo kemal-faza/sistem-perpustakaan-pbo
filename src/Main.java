@@ -21,9 +21,9 @@ public class Main {
     }
 
     private static final String[] MENU_UTAMA = {
-        "Keluar",
-        "Login Admin",
-        "Login Anggota"
+            "Keluar",
+            "Login Admin",
+            "Login Anggota"
     };
 
     public static void main(String[] args) {
@@ -32,6 +32,7 @@ public class Main {
         // Load sample data jika database kosong
         boolean dataBaru = service.loadSampleData();
 
+        System.out.println("=".repeat(43) + "\n");
         printWidyaBanner();
         System.out.println("\n" + "=".repeat(43));
         System.out.println("  WIDYA \u2014 Sistem Manajemen Perpustakaan");

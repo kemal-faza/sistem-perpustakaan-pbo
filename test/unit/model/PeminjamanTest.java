@@ -30,21 +30,23 @@ class PeminjamanTest {
 
     @Test
     void testKembalikanTepatWaktu() {
+        LocalDate now = LocalDate.now();
         Peminjaman p = new Peminjaman("P001", "A001", "B001",
-                today.minusDays(5), today);
+                now.minusDays(5), now);
         int hariTerlambat = p.kembalikan();
-
+        
         assertEquals(0, hariTerlambat);
         assertEquals(StatusPeminjaman.DIKEMBALIKAN, p.getStatus());
-        assertEquals(today, p.getTanggalDikembalikan());
+        assertEquals(now, p.getTanggalDikembalikan());
     }
 
     @Test
     void testKembalikanTerlambat() {
+        LocalDate now = LocalDate.now();
         Peminjaman p = new Peminjaman("P001", "A001", "B001",
-                today.minusDays(10), today.minusDays(3));
+                now.minusDays(10), now.minusDays(3));
         int hariTerlambat = p.kembalikan();
-
+        
         assertEquals(3, hariTerlambat);
         assertEquals(StatusPeminjaman.TERLAMBAT, p.getStatus());
     }
@@ -59,9 +61,10 @@ class PeminjamanTest {
 
     @Test
     void testHitungHariTerlambatBelumKembali() {
+        LocalDate now = LocalDate.now();
         // Terlambat 5 hari dan belum dikembalikan
         Peminjaman p = new Peminjaman("P001", "A001", "B001",
-                today.minusDays(12), today.minusDays(5));
+                now.minusDays(12), now.minusDays(5));
         int terlambat = p.hitungHariTerlambat();
         assertEquals(5, terlambat);
     }

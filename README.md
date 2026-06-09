@@ -529,6 +529,9 @@ classDiagram
 
     ItemPerpustakaan --> Kategori
 
+    BukuService ..> AddResult : return type
+    PerpustakaanService ..> AddResult : return type
+
     BukuTidakTersediaException --|> Exception
     AnggotaTidakValidException --|> Exception
     PeminjamanMelebihiBatasException --|> Exception

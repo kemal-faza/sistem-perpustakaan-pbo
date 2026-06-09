@@ -241,11 +241,6 @@ classDiagram
         DIKEMBALIKAN
         TERLAMBAT
     }
-    class AddResult {
-        <<enumeration>>
-        BARU
-        STOK
-    }
     class Kategori {
         <<enumeration>>
         TEKNOLOGI
@@ -417,6 +412,8 @@ classDiagram
     }
     class AddResult {
         <<enumeration>>
+        BARU
+        STOK
     }
 
     %% ── SERVICES ──

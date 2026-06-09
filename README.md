@@ -227,312 +227,312 @@ scripts\test.bat
 
 ## UML Class Diagram
 
-> **Render ke image:** Copy kode Mermaid di bawah ke [Mermaid Live Editor](https://mermaid.live) untuk export ke PNG/SVG. Struktur subgraph per layer memudahkan screenshot dan cropping per bagian.
+> **Render ke image:** Copy kode Mermaid di bawah ke [Mermaid Live Editor](https://mermaid.live) untuk export ke PNG/SVG.
+
+### Domain Model
 
 ```mermaid
 classDiagram
-    direction TB
 
-    %% ── LAYER 1: ENUMS ──
-    subgraph Enums
-        class StatusPeminjaman {
-            <<enumeration>>
-            DIPINJAM
-            DIKEMBALIKAN
-            TERLAMBAT
-        }
-        class AddResult {
-            <<enumeration>>
-            BARU
-            STOK
-        }
-        class Kategori {
-            <<enumeration>>
-            TEKNOLOGI
-            ILMIAH
-            FIKSI
-            NON_FIKSI
-            SEJARAH
-            PENDIDIKAN
-            REFERENSI
-            UMUM
-            - displayName : String
-            + getDisplayName() String
-            + fromString(String)$ Kategori
-        }
-    end
+    %% ── ENUMS ──
+    class StatusPeminjaman {
+        <<enumeration>>
+        DIPINJAM
+        DIKEMBALIKAN
+        TERLAMBAT
+    }
+    class AddResult {
+        <<enumeration>>
+        BARU
+        STOK
+    }
+    class Kategori {
+        <<enumeration>>
+        TEKNOLOGI
+        ILMIAH
+        FIKSI
+        NON_FIKSI
+        SEJARAH
+        PENDIDIKAN
+        REFERENSI
+        UMUM
+        - displayName : String
+        + getDisplayName() String
+        + fromString(String)$ Kategori
+    }
 
-    %% ── LAYER 2: INTERFACES ──
-    subgraph Interfaces
-        class Identifiable {
-            <<interface>>
-            + getId() String
-        }
-        class IBorrowable {
-            <<interface>>
-            + pinjam() void
-            + kembalikan() void
-            + perpanjang() void
-        }
-        class ISearchable {
-            <<interface>>
-            + cocok(String keyword) boolean
-        }
-        class ILibraryService {
-            <<interface>>
-            + loginAdmin(String, String) boolean
-            + loginAnggota(String) boolean
-            + logout() void
-            + getCurrentUser() Object
-            + isAdmin() boolean
-            + isAnggota() boolean
-            + getCurrentAnggota() Anggota
-            + tambahBuku(ItemPerpustakaan) AddResult
-            + hapusBuku(String) void
-            + cariBuku(String) List~ItemPerpustakaan~
-            + getAllBuku() List~ItemPerpustakaan~
-            + getBukuById(String) ItemPerpustakaan
-            + tambahAnggota(Anggota) void
-            + getAllAnggota() List~Anggota~
-            + pinjamBuku(String, String) void
-            + kembalikanBuku(String) Peminjaman
-            + perpanjangPeminjaman(String) void
-            + getRiwayatPeminjaman(String) List~Peminjaman~
-            + getPeminjamanAktif() List~Peminjaman~
-            + getAllPeminjaman() List~Peminjaman~
-            + getTotalDenda() double
-            + generateIdBuku() String
-            + generateIdAnggota() String
-            + simpanSemua() void
-            + loadSampleData() boolean
-        }
-    end
+    %% ── INTERFACES ──
+    class Identifiable {
+        <<interface>>
+        + getId() String
+    }
+    class IBorrowable {
+        <<interface>>
+        + pinjam() void
+        + kembalikan() void
+        + perpanjang() void
+    }
+    class ISearchable {
+        <<interface>>
+        + cocok(String keyword) boolean
+    }
+    class ILibraryService {
+        <<interface>>
+        + loginAdmin(String, String) boolean
+        + loginAnggota(String) boolean
+        + logout() void
+        + getCurrentUser() Object
+        + isAdmin() boolean
+        + isAnggota() boolean
+        + getCurrentAnggota() Anggota
+        + tambahBuku(ItemPerpustakaan) AddResult
+        + hapusBuku(String) void
+        + cariBuku(String) List~ItemPerpustakaan~
+        + getAllBuku() List~ItemPerpustakaan~
+        + getBukuById(String) ItemPerpustakaan
+        + tambahAnggota(Anggota) void
+        + getAllAnggota() List~Anggota~
+        + pinjamBuku(String, String) void
+        + kembalikanBuku(String) Peminjaman
+        + perpanjangPeminjaman(String) void
+        + getRiwayatPeminjaman(String) List~Peminjaman~
+        + getPeminjamanAktif() List~Peminjaman~
+        + getAllPeminjaman() List~Peminjaman~
+        + getTotalDenda() double
+        + generateIdBuku() String
+        + generateIdAnggota() String
+        + simpanSemua() void
+        + loadSampleData() boolean
+    }
 
-    %% ── LAYER 3: DOMAIN MODEL ──
-    subgraph DomainModel
-        class ItemPerpustakaan {
-            <<abstract>>
-            - type : String
-            - id : String
-            - judul : String
-            - tahunTerbit : int
-            - kategori : Kategori
-            - penerbit : String
-            - penulis : String
-            - stok : int
-            - dipinjam : int
-            + isTersedia() boolean
-            + getTersedia() int
-            + hitungDenda(int)* double
-            + getTipe()* String
-            + cocok(String) boolean
-            + pinjam() void
-            + kembalikan() void
-            + perpanjang() void
-        }
-        class BukuFisik {
-            - jumlahHalaman : int
-            - lokasiRak : String
-            + hitungDenda(int) double
-            + getTipe() String
-        }
-        class BukuDigital {
-            - ukuranFile : double
-            - format : String
-            + hitungDenda(int) double
-            + getTipe() String
-        }
-        class Jurnal {
-            - volume : int
-            - nomor : int
-            - bidang : String
-            + hitungDenda(int) double
-            + getTipe() String
-        }
-        class Anggota {
-            + MAX_PINJAM : int$
-            - id : String
-            - nama : String
-            - pinjamanAktif : int
-            + bisaPinjam() boolean
-            + tambahPinjaman() void
-            + kurangiPinjaman() void
-        }
-        class Admin {
-            - id : String
-            - username : String
-            - password : String
-            + validatePassword(String) boolean
-        }
-        class Peminjaman {
-            + MAX_PERPANJANG : int$
-            - idPeminjaman : String
-            - idAnggota : String
-            - idItem : String
-            - tanggalPinjam : LocalDate
-            - tanggalKembali : LocalDate
-            - tanggalDikembalikan : LocalDate
-            - status : StatusPeminjaman
-            - denda : double
-            - jumlahPerpanjang : int
-            + hitungHariTerlambat() int
-            + perpanjang() void
-            + kembalikan() int
-        }
-    end
-
-    %% ── LAYER 4: SERVICES ──
-    subgraph Services
-        class PerpustakaanService {
-            - repoBuku : Repository
-            - repoAnggota : Repository
-            - repoPeminjaman : Repository
-            - currentAdmin : Admin
-            - currentAnggota : Anggota
-            - authService : AuthService
-            - bukuService : BukuService
-            - peminjamanService : PeminjamanService
-            + getInstance()$ PerpustakaanService
-            + loginAdmin(String, String) boolean
-            + loginAnggota(String) boolean
-            + logout() void
-            + tambahBuku(ItemPerpustakaan) AddResult
-            + hapusBuku(String) void
-            + cariBuku(String) List
-            + getAllBuku() List
-            + pinjamBuku(String, String) void
-            + kembalikanBuku(String) Peminjaman
-            + perpanjangPeminjaman(String) void
-            + simpanSemua() void
-            + loadSampleData() boolean
-        }
-        class BukuService {
-            - repoBuku : Repository
-            - repoAnggota : Repository
-            + tambahBuku(ItemPerpustakaan) AddResult
-            + hapusBuku(String) void
-            + cariBuku(String) List
-            + getAllBuku() List
-            + getBukuById(String) ItemPerpustakaan
-            + tambahAnggota(Anggota) void
-            + getAllAnggota() List
-            + generateIdBuku() String
-            + generateIdAnggota() String
-        }
-        class PeminjamanService {
-            - repoBuku : Repository
-            - repoAnggota : Repository
-            - repoPeminjaman : Repository
-            + pinjamBuku(String, String) void
-            + kembalikanBuku(String) Peminjaman
-            + perpanjangPeminjaman(String) void
-            + getRiwayatPeminjaman(String) List
-            + getPeminjamanAktif() List
-            + getAllPeminjaman() List
-            + getTotalDenda() double
-        }
-        class AuthService {
-            - repoAnggota : Repository
-            - admin : Admin
-            + validateAdmin(String, String) boolean
-            + loginAnggota(String) Anggota
-            + getAdmin() Admin
-        }
-    end
-
-    %% ── LAYER 5: UI ──
-    subgraph UI
-        class MenuManager {
-            # scanner : Scanner$
-            # LINE : String$
-            + tampilkanHeader(String) void
-            + tampilkanMenu(String[]) int
-            + bacaInput(String) String
-            + bacaInt(String) int
-            + bacaDouble(String) double
-            + bacaIntPositif(String) int
-            + bacaDoublePositif(String) double
-            + bacaInputWajib(String) String
-            + tungguEnter() void
-            + cetakSukses(String) void
-            + cetakError(String) void
-            + cetakInfo(String) void
-            + bacaLokasiRak() String
-            + cariBuku(ILibraryService, boolean) void
-        }
-        class MenuAdmin {
-            - service : ILibraryService
-            + jalankan() void
-        }
-        class MenuAnggota {
-            - service : ILibraryService
-            + jalankan() void
-        }
-    end
-
-    %% ── LAYER 6: INFRASTRUCTURE ──
-    subgraph Infrastructure
-        class Repository~T~ {
-            - items : ArrayList~T~
-            - filePath : String
-            - typeToken : Type
-            - gson : Gson
-            - prettyGson : Gson
-            + Repository(String, Type)
-            + add(T) void
-            + findById(String) T
-            + find(Predicate) List~T~
-            + delete(String) boolean
-            + update(T) boolean
-            + getAll() List~T~
-            + clear() void
-            + size() int
-            + saveToJson() boolean
-            + loadFromJson() void
-            + generateId(String) String
-        }
-        class Config {
-            - props : Properties
-            - instance : Config$
-            + getInstance()$ Config
-            + getAdminUsername() String
-            + getAdminPassword() String
-        }
-    end
-
-    %% ── LAYER 7: EXCEPTIONS ──
-    subgraph Exceptions
-        class BukuTidakTersediaException
-        class AnggotaTidakValidException
-        class PeminjamanMelebihiBatasException
-        class BukuTidakDitemukanException
-        class PeminjamanTidakDitemukanException
-    end
+    %% ── DOMAIN CLASSES ──
+    class ItemPerpustakaan {
+        <<abstract>>
+        - type : String
+        - id : String
+        - judul : String
+        - tahunTerbit : int
+        - kategori : Kategori
+        - penerbit : String
+        - penulis : String
+        - stok : int
+        - dipinjam : int
+        + isTersedia() boolean
+        + getTersedia() int
+        + hitungDenda(int)* double
+        + getTipe()* String
+        + cocok(String) boolean
+        + pinjam() void
+        + kembalikan() void
+        + perpanjang() void
+    }
+    class BukuFisik {
+        - jumlahHalaman : int
+        - lokasiRak : String
+        + hitungDenda(int) double
+        + getTipe() String
+    }
+    class BukuDigital {
+        - ukuranFile : double
+        - format : String
+        + hitungDenda(int) double
+        + getTipe() String
+    }
+    class Jurnal {
+        - volume : int
+        - nomor : int
+        - bidang : String
+        + hitungDenda(int) double
+        + getTipe() String
+    }
+    class Anggota {
+        + MAX_PINJAM : int$
+        - id : String
+        - nama : String
+        - pinjamanAktif : int
+        + bisaPinjam() boolean
+        + tambahPinjaman() void
+        + kurangiPinjaman() void
+    }
+    class Admin {
+        - id : String
+        - username : String
+        - password : String
+        + validatePassword(String) boolean
+    }
+    class Peminjaman {
+        + MAX_PERPANJANG : int$
+        - idPeminjaman : String
+        - idAnggota : String
+        - idItem : String
+        - tanggalPinjam : LocalDate
+        - tanggalKembali : LocalDate
+        - tanggalDikembalikan : LocalDate
+        - status : StatusPeminjaman
+        - denda : double
+        - jumlahPerpanjang : int
+        + hitungHariTerlambat() int
+        + perpanjang() void
+        + kembalikan() int
+    }
+    class Config {
+        - props : Properties
+        - instance : Config$
+        + getInstance()$ Config
+        + getAdminUsername() String
+        + getAdminPassword() String
+    }
 
     %% ── RELATIONSHIPS ──
 
-    %% Implementations (Domain --> Interfaces)
+    %% Implementations
     ItemPerpustakaan ..|> Identifiable
     ItemPerpustakaan ..|> IBorrowable
     ItemPerpustakaan ..|> ISearchable
     Anggota ..|> Identifiable
     Peminjaman ..|> Identifiable
     Admin ..|> Identifiable
-    PerpustakaanService ..|> ILibraryService
 
-    %% Inheritance (Concrete --> Abstract)
+    %% Inheritance
     ItemPerpustakaan <|-- BukuFisik
     ItemPerpustakaan <|-- BukuDigital
     ItemPerpustakaan <|-- Jurnal
+
+    %% Associations
+    Peminjaman --> Anggota : idAnggota
+    Peminjaman --> ItemPerpustakaan : idItem
+    Peminjaman --> StatusPeminjaman
+    ItemPerpustakaan --> Kategori
+    Config --> Admin : credential
+```
+
+### Service & UI
+
+```mermaid
+classDiagram
+
+    %% ── REFERENCE FROM DOMAIN ──
+    class ILibraryService {
+        <<interface>>
+    }
+    class AddResult {
+        <<enumeration>>
+    }
+
+    %% ── SERVICES ──
+    class PerpustakaanService {
+        - repoBuku : Repository
+        - repoAnggota : Repository
+        - repoPeminjaman : Repository
+        - currentAdmin : Admin
+        - currentAnggota : Anggota
+        - authService : AuthService
+        - bukuService : BukuService
+        - peminjamanService : PeminjamanService
+        + getInstance()$ PerpustakaanService
+        + loginAdmin(String, String) boolean
+        + loginAnggota(String) boolean
+        + logout() void
+        + tambahBuku(ItemPerpustakaan) AddResult
+        + hapusBuku(String) void
+        + cariBuku(String) List
+        + getAllBuku() List
+        + pinjamBuku(String, String) void
+        + kembalikanBuku(String) Peminjaman
+        + perpanjangPeminjaman(String) void
+        + simpanSemua() void
+        + loadSampleData() boolean
+    }
+    class BukuService {
+        - repoBuku : Repository
+        - repoAnggota : Repository
+        + tambahBuku(ItemPerpustakaan) AddResult
+        + hapusBuku(String) void
+        + cariBuku(String) List
+        + getAllBuku() List
+        + getBukuById(String) ItemPerpustakaan
+        + tambahAnggota(Anggota) void
+        + getAllAnggota() List
+        + generateIdBuku() String
+        + generateIdAnggota() String
+    }
+    class PeminjamanService {
+        - repoBuku : Repository
+        - repoAnggota : Repository
+        - repoPeminjaman : Repository
+        + pinjamBuku(String, String) void
+        + kembalikanBuku(String) Peminjaman
+        + perpanjangPeminjaman(String) void
+        + getRiwayatPeminjaman(String) List
+        + getPeminjamanAktif() List
+        + getAllPeminjaman() List
+        + getTotalDenda() double
+    }
+    class AuthService {
+        - repoAnggota : Repository
+        - admin : Admin
+        + validateAdmin(String, String) boolean
+        + loginAnggota(String) Anggota
+        + getAdmin() Admin
+    }
+
+    %% ── UI ──
+    class MenuManager {
+        # scanner : Scanner$
+        # LINE : String$
+        + tampilkanHeader(String) void
+        + tampilkanMenu(String[]) int
+        + bacaInput(String) String
+        + bacaInt(String) int
+        + bacaDouble(String) double
+        + bacaIntPositif(String) int
+        + bacaDoublePositif(String) double
+        + bacaInputWajib(String) String
+        + tungguEnter() void
+        + cetakSukses(String) void
+        + cetakError(String) void
+        + cetakInfo(String) void
+        + bacaLokasiRak() String
+        + cariBuku(ILibraryService, boolean) void
+    }
+    class MenuAdmin {
+        - service : ILibraryService
+        + jalankan() void
+    }
+    class MenuAnggota {
+        - service : ILibraryService
+        + jalankan() void
+    }
+
+    %% ── INFRASTRUCTURE ──
+    class Repository~T~ {
+        - items : ArrayList~T~
+        - filePath : String
+        - typeToken : Type
+        - gson : Gson
+        - prettyGson : Gson
+        + Repository(String, Type)
+        + add(T) void
+        + findById(String) T
+        + find(Predicate) List~T~
+        + delete(String) boolean
+        + update(T) boolean
+        + getAll() List~T~
+        + clear() void
+        + size() int
+        + saveToJson() boolean
+        + loadFromJson() void
+        + generateId(String) String
+    }
+
+    %% ── RELATIONSHIPS ──
+
+    %% Implementation (Service --> Interface)
+    PerpustakaanService ..|> ILibraryService
+
+    %% Inheritance (UI)
     MenuAdmin --|> MenuManager
     MenuAnggota --|> MenuManager
-
-    %% Exception Hierarchy
-    BukuTidakTersediaException --|> Exception
-    AnggotaTidakValidException --|> Exception
-    PeminjamanMelebihiBatasException --|> Exception
-    BukuTidakDitemukanException --|> Exception
-    PeminjamanTidakDitemukanException --|> Exception
 
     %% Composition (Services --> Sub-services)
     PerpustakaanService o-- BukuService
@@ -545,13 +545,6 @@ classDiagram
     PeminjamanService --> Repository
     AuthService --> Repository
 
-    %% Associations
-    Peminjaman --> Anggota : idAnggota
-    Peminjaman --> ItemPerpustakaan : idItem
-    Peminjaman --> StatusPeminjaman
-    ItemPerpustakaan --> Kategori
-    Config --> Admin : credential
-
     %% UI --> Service Interface
     MenuAdmin --> ILibraryService : menggunakan
     MenuAnggota --> ILibraryService : menggunakan
@@ -559,6 +552,24 @@ classDiagram
     %% Return type dependencies
     BukuService ..> AddResult : return type
     PerpustakaanService ..> AddResult : return type
+```
+
+### Exception
+
+```mermaid
+classDiagram
+
+    class BukuTidakTersediaException
+    class AnggotaTidakValidException
+    class PeminjamanMelebihiBatasException
+    class BukuTidakDitemukanException
+    class PeminjamanTidakDitemukanException
+
+    BukuTidakTersediaException --|> Exception
+    AnggotaTidakValidException --|> Exception
+    PeminjamanMelebihiBatasException --|> Exception
+    BukuTidakDitemukanException --|> Exception
+    PeminjamanTidakDitemukanException --|> Exception
 ```
 
 ---

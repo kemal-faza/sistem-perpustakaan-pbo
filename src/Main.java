@@ -69,7 +69,7 @@ public class Main {
 
         if (service.loginAdmin(username, password)) {
             menu.cetakSukses("Login berhasil sebagai Admin.");
-            new MenuAdmin().jalankan();
+            new MenuAdmin(service).jalankan();
         } else {
             menu.cetakError("Username atau password salah.");
             menu.tungguEnter();
@@ -85,7 +85,7 @@ public class Main {
         try {
             if (service.loginAnggota(id)) {
                 menu.cetakSukses("Selamat datang, " + service.getCurrentAnggota().getNama() + "!");
-                new MenuAnggota().jalankan();
+                new MenuAnggota(service).jalankan();
             }
         } catch (AnggotaTidakValidException e) {
             menu.cetakError(e.getMessage());

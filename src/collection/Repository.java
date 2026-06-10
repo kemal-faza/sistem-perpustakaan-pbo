@@ -1,21 +1,9 @@
 package collection;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-
-import java.time.LocalDate;
 
 import interfaces.Identifiable;
-import model.Kategori;
-import model.base.ItemPerpustakaan;
-import model.BukuFisik;
-import model.BukuDigital;
-import model.Jurnal;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -39,7 +27,7 @@ public class Repository<T extends Identifiable> {
     private final Gson prettyGson;
 
     /**
-     * Constructor repository.
+     * Constructor repository dengan Gson dari GsonFactory.
      * @param filePath path file JSON untuk persistensi
      * @param typeToken TypeToken Gson untuk deserialisasi
      */
@@ -47,8 +35,8 @@ public class Repository<T extends Identifiable> {
         this.items = new ArrayList<>();
         this.filePath = filePath;
         this.typeToken = typeToken;
-        this.gson = createGson().create();
-        this.prettyGson = createGson().setPrettyPrinting().create();
+        this.gson = GsonFactory.create();
+        this.prettyGson = GsonFactory.createPretty();
         loadFromJson();
     }
 
@@ -161,36 +149,6 @@ public class Repository<T extends Identifiable> {
                 + ". Data akan di-reset. (" + e.getMessage() + ")");
             items = new ArrayList<>();
         }
-    }
-
-    /**
-     * Membangun Gson instance dengan RuntimeTypeAdapterFactory
-     * untuk mendukung polymorphic deserialization ItemPerpustakaan.
-     */
-    private GsonBuilder createGson() {
-        RuntimeTypeAdapterFactory<ItemPerpustakaan> typeFactory =
-            RuntimeTypeAdapterFactory.of(ItemPerpustakaan.class, "type")
-                .registerSubtype(BukuFisik.class, "Buku Fisik")
-                .registerSubtype(BukuDigital.class, "Buku Digital")
-                .registerSubtype(Jurnal.class, "Jurnal");
-
-        // TypeAdapter untuk Kategori enum — handle backward compat
-        JsonDeserializer<Kategori> kategoriDeserializer = (json, type, ctx) -> {
-            String value = json.getAsString();
-            return Kategori.fromString(value);
-        };
-
-        // TypeAdapter untuk LocalDate — bypass Java 17+ reflection restrictions
-        JsonSerializer<LocalDate> localDateSerializer =
-            (src, type, ctx) -> new JsonPrimitive(src.toString());
-        JsonDeserializer<LocalDate> localDateDeserializer =
-            (json, type, ctx) -> LocalDate.parse(json.getAsString());
-
-        return new GsonBuilder()
-            .registerTypeAdapterFactory(typeFactory)
-            .registerTypeAdapter(Kategori.class, kategoriDeserializer)
-            .registerTypeAdapter(LocalDate.class, localDateSerializer)
-            .registerTypeAdapter(LocalDate.class, localDateDeserializer);
     }
 
     // === Utility ===

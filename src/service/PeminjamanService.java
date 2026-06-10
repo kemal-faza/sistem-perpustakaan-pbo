@@ -39,12 +39,20 @@ public class PeminjamanService {
                     "Anggota dengan ID '" + idAnggota + "' tidak ditemukan.");
         }
 
-        if (!item.isTersedia()) {
+        // Model adalah authoritative untuk invariant.
+        // Service menerjemahkan IllegalStateException menjadi domain exception.
+        try {
+            item.pinjam();
+        } catch (IllegalStateException e) {
             throw new BukuTidakTersediaException(
-                    "Item '" + item.getJudul() + "' sedang dipinjam orang lain.");
+                    "Item '" + item.getJudul() + "' sedang tidak tersedia.");
         }
 
-        if (!anggota.bisaPinjam()) {
+        try {
+            anggota.tambahPinjaman();
+        } catch (IllegalStateException e) {
+            // Rollback: kembalikan stok item karena peminjaman gagal
+            item.kembalikan();
             throw new PeminjamanMelebihiBatasException(
                     "Anggota '" + anggota.getNama() + "' sudah mencapai batas pinjam ("
                             + Anggota.MAX_PINJAM + ").");
@@ -55,9 +63,6 @@ public class PeminjamanService {
         LocalDate tanggalKembali = tanggalPinjam.plusDays(7);
         Peminjaman peminjaman = new Peminjaman(idPeminjaman, idAnggota, idBuku,
                 tanggalPinjam, tanggalKembali);
-
-        item.pinjam();
-        anggota.tambahPinjaman();
 
         repoPeminjaman.add(peminjaman);
     }

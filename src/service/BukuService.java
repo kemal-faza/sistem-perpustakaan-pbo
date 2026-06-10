@@ -4,7 +4,6 @@ import collection.Repository;
 import exception.BukuTidakDitemukanException;
 import interfaces.ISearchable;
 import model.AddResult;
-import model.Anggota;
 import model.base.ItemPerpustakaan;
 
 import java.util.ArrayList;
@@ -12,11 +11,9 @@ import java.util.List;
 
 public class BukuService {
     private Repository<ItemPerpustakaan> repoBuku;
-    private Repository<Anggota> repoAnggota;
 
-    public BukuService(Repository<ItemPerpustakaan> repoBuku, Repository<Anggota> repoAnggota) {
+    public BukuService(Repository<ItemPerpustakaan> repoBuku) {
         this.repoBuku = repoBuku;
-        this.repoAnggota = repoAnggota;
     }
 
     public AddResult tambahBuku(ItemPerpustakaan item) {
@@ -67,23 +64,7 @@ public class BukuService {
         return repoBuku.findById(idBuku);
     }
 
-    public void tambahAnggota(Anggota anggota) {
-        repoAnggota.add(anggota);
-    }
-
-    public List<Anggota> getAllAnggota() {
-        return repoAnggota.getAll();
-    }
-
-    public Anggota getAnggotaById(String idAnggota) {
-        return repoAnggota.findById(idAnggota);
-    }
-
     public String generateIdBuku() {
         return repoBuku.generateId("B");
-    }
-
-    public String generateIdAnggota() {
-        return repoAnggota.generateId("A");
     }
 }

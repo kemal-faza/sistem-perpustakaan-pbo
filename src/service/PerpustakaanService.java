@@ -25,6 +25,7 @@ public class PerpustakaanService implements ILibraryService {
 
     private AuthService authService;
     private BukuService bukuService;
+    private AnggotaService anggotaService;
     private PeminjamanService peminjamanService;
 
     private Admin currentAdmin;
@@ -46,7 +47,8 @@ public class PerpustakaanService implements ILibraryService {
         this.repoPeminjaman = new Repository<>(FILE_PEMINJAMAN, peminjamanType);
 
         this.authService = new AuthService(repoAnggota);
-        this.bukuService = new BukuService(repoBuku, repoAnggota);
+        this.bukuService = new BukuService(repoBuku);
+        this.anggotaService = new AnggotaService(repoAnggota);
         this.peminjamanService = new PeminjamanService(repoBuku, repoAnggota, repoPeminjaman);
 
         this.currentAdmin = null;
@@ -103,13 +105,13 @@ public class PerpustakaanService implements ILibraryService {
 
     public AddResult tambahBuku(ItemPerpustakaan item) {
         AddResult result = bukuService.tambahBuku(item);
-        repoBuku.saveToJson();
+        persistAll();
         return result;
     }
 
     public void hapusBuku(String idBuku) throws BukuTidakDitemukanException {
         bukuService.hapusBuku(idBuku);
-        repoBuku.saveToJson();
+        persistAll();
     }
 
     public List<ItemPerpustakaan> cariBuku(String keyword) {
@@ -127,16 +129,16 @@ public class PerpustakaanService implements ILibraryService {
     // ========== MANAJEMEN ANGGOTA ==========
 
     public void tambahAnggota(Anggota anggota) {
-        bukuService.tambahAnggota(anggota);
-        repoAnggota.saveToJson();
+        anggotaService.tambahAnggota(anggota);
+        persistAll();
     }
 
     public List<Anggota> getAllAnggota() {
-        return bukuService.getAllAnggota();
+        return anggotaService.getAllAnggota();
     }
 
     public Anggota getAnggotaById(String idAnggota) {
-        return bukuService.getAnggotaById(idAnggota);
+        return anggotaService.getAnggotaById(idAnggota);
     }
 
     // ========== PEMINJAMAN ==========
@@ -145,24 +147,20 @@ public class PerpustakaanService implements ILibraryService {
             throws BukuTidakDitemukanException, AnggotaTidakValidException,
             BukuTidakTersediaException, PeminjamanMelebihiBatasException {
         peminjamanService.pinjamBuku(idBuku, idAnggota);
-        repoBuku.saveToJson();
-        repoAnggota.saveToJson();
-        repoPeminjaman.saveToJson();
+        persistAll();
     }
 
     public Peminjaman kembalikanBuku(String idPeminjaman)
             throws PeminjamanTidakDitemukanException, BukuTidakDitemukanException, AnggotaTidakValidException, IllegalStateException {
         Peminjaman result = peminjamanService.kembalikanBuku(idPeminjaman);
-        repoPeminjaman.saveToJson();
-        repoBuku.saveToJson();
-        repoAnggota.saveToJson();
+        persistAll();
         return result;
     }
 
     public void perpanjangPeminjaman(String idPeminjaman)
             throws PeminjamanTidakDitemukanException, IllegalStateException {
         peminjamanService.perpanjangPeminjaman(idPeminjaman);
-        repoPeminjaman.saveToJson();
+        persistAll();
     }
 
     public List<Peminjaman> getRiwayatPeminjaman(String idAnggota) {
@@ -185,9 +183,13 @@ public class PerpustakaanService implements ILibraryService {
         return peminjamanService.getTotalDenda();
     }
 
-    // ========== PERSISTENCE ==========
+    // ========== INTERNAL PERSISTENCE HELPER ==========
 
-    public void simpanSemua() {
+    /**
+     * Menyimpan semua repository ke file JSON.
+     * Dipanggil setelah setiap operasi write untuk memastikan konsistensi data.
+     */
+    private void persistAll() {
         boolean ok = true;
         if (!repoBuku.saveToJson()) ok = false;
         if (!repoAnggota.saveToJson()) ok = false;
@@ -197,6 +199,12 @@ public class PerpustakaanService implements ILibraryService {
         }
     }
 
+    // ========== PERSISTENCE ==========
+
+    public void simpanSemua() {
+        persistAll();
+    }
+
     // ========== GENERATE ID ==========
 
     public String generateIdBuku() {
@@ -204,7 +212,7 @@ public class PerpustakaanService implements ILibraryService {
     }
 
     public String generateIdAnggota() {
-        return bukuService.generateIdAnggota();
+        return anggotaService.generateIdAnggota();
     }
 
     // ========== DATA SAMPLE ==========

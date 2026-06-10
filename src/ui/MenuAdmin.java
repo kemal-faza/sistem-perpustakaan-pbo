@@ -4,8 +4,6 @@ import exception.*;
 import interfaces.ILibraryService;
 import model.*;
 import model.base.ItemPerpustakaan;
-import service.PerpustakaanService;
-
 import java.util.List;
 
 /**
@@ -26,10 +24,14 @@ public class MenuAdmin extends MenuManager {
         "Laporan Peminjaman"
     };
 
-    private ILibraryService service;
+    private final ILibraryService service;
 
-    public MenuAdmin() {
-        this.service = PerpustakaanService.getInstance();
+    /**
+     * Constructor dengan dependency injection.
+     * @param service instance ILibraryService untuk operasi perpustakaan
+     */
+    public MenuAdmin(ILibraryService service) {
+        this.service = service;
     }
 
     /** Menjalankan loop menu admin */

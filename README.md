@@ -4,7 +4,7 @@
 
 ![Widya](https://img.shields.io/badge/Widya-v1.0-8B5CF6)
 ![Java](https://img.shields.io/badge/Java-17%2B-orange)
-![Tests](https://img.shields.io/badge/Tests-108%20passed-green)
+![Tests](https://img.shields.io/badge/Tests-120%20passed-green)
 ![CLI](https://img.shields.io/badge/Platform-CLI-blue)
 
 ```
@@ -425,6 +425,7 @@ classDiagram
         - currentAnggota : Anggota
         - authService : AuthService
         - bukuService : BukuService
+        - anggotaService : AnggotaService
         - peminjamanService : PeminjamanService
         + getInstance()$ PerpustakaanService
         + loginAdmin(String, String) boolean
@@ -439,18 +440,22 @@ classDiagram
         + perpanjangPeminjaman(String) void
         + simpanSemua() void
         + loadSampleData() boolean
+        - persistAll() void
     }
     class BukuService {
         - repoBuku : Repository
-        - repoAnggota : Repository
         + tambahBuku(ItemPerpustakaan) AddResult
         + hapusBuku(String) void
         + cariBuku(String) List
         + getAllBuku() List
         + getBukuById(String) ItemPerpustakaan
+        + generateIdBuku() String
+    }
+    class AnggotaService {
+        - repoAnggota : Repository
         + tambahAnggota(Anggota) void
         + getAllAnggota() List
-        + generateIdBuku() String
+        + getAnggotaById(String) Anggota
         + generateIdAnggota() String
     }
     class PeminjamanService {
@@ -494,10 +499,12 @@ classDiagram
     }
     class MenuAdmin {
         - service : ILibraryService
+        + MenuAdmin(ILibraryService)
         + jalankan() void
     }
     class MenuAnggota {
         - service : ILibraryService
+        + MenuAnggota(ILibraryService)
         + jalankan() void
     }
 
@@ -521,6 +528,13 @@ classDiagram
         + loadFromJson() void
         + generateId(String) String
     }
+    class GsonFactory {
+        <<utility>>
+        - GsonFactory()$
+        + builder()$ GsonBuilder
+        + create()$ Gson
+        + createPretty()$ Gson
+    }
 
     %% ── RELATIONSHIPS ──
 
@@ -533,14 +547,19 @@ classDiagram
 
     %% Composition (Services --> Sub-services)
     PerpustakaanService o-- BukuService
+    PerpustakaanService o-- AnggotaService
     PerpustakaanService o-- PeminjamanService
     PerpustakaanService o-- AuthService
 
     %% Services --> Repository
     PerpustakaanService --> Repository : mengelola
     BukuService --> Repository
+    AnggotaService --> Repository
     PeminjamanService --> Repository
     AuthService --> Repository
+
+    %% Repository --> GsonFactory
+    Repository ..> GsonFactory : uses
 
     %% UI --> Service Interface
     MenuAdmin --> ILibraryService : menggunakan
@@ -595,7 +614,8 @@ perpustakaan-pbo/
 │   │   ├── ISearchable.java
 │   │   └── ILibraryService.java
 │   ├── collection/
-│   │   └── Repository.java
+│   │   ├── Repository.java
+│   │   └── GsonFactory.java        — Konfigurasi Gson polymorphic
 │   ├── exception/
 │   │   ├── BukuTidakTersediaException.java
 │   │   ├── AnggotaTidakValidException.java
@@ -603,8 +623,9 @@ perpustakaan-pbo/
 │   │   ├── BukuTidakDitemukanException.java
 │   │   └── PeminjamanTidakDitemukanException.java
 │   ├── service/
-│   │   ├── PerpustakaanService.java — Facade utama
-│   │   ├── BukuService.java        — CRUD buku & anggota
+│   │   ├── PerpustakaanService.java — Facade utama + persistence
+│   │   ├── BukuService.java        — CRUD buku
+│   │   ├── AnggotaService.java     — CRUD anggota
 │   │   ├── PeminjamanService.java  — Pinjam/kembalikan/denda
 │   │   └── AuthService.java        — Autentikasi
 │   ├── ui/
@@ -622,8 +643,8 @@ perpustakaan-pbo/
 ├── test/
 │   └── unit/
 │       ├── model/               — 7 test classes
-│       ├── collection/          — RepositoryTest
-│       └── service/             — AuthServiceTest, PerpustakaanServiceTest
+│       ├── collection/          — RepositoryTest, GsonFactoryTest
+│       └── service/             — AuthServiceTest, PerpustakaanServiceTest, AnggotaServiceTest
 │
 ├── data/
 │   ├── buku.json
@@ -1052,12 +1073,13 @@ Pemisahan tanggung jawab: Model/Service layer **melempar** exception, UI layer *
 
 **(b) Aggregation** — `PerpustakaanService` memiliki sub-services:
 ```java
-// PerpustakaanService.java baris 26-28
+// PerpustakaanService.java baris 26-29
 private AuthService authService;
 private BukuService bukuService;
+private AnggotaService anggotaService;
 private PeminjamanService peminjamanService;
 ```
-Sub-services dibuat di constructor (baris 48-50) dan bisa di-reuse secara independen.
+Sub-services dibuat di constructor (baris 49-52) dan bisa di-reuse secara independen.
 
 **(c) Association (directional)** — `Peminjaman` memiliki referensi ke `Anggota` dan `ItemPerpustakaan` melalui **String ID**:
 ```java
@@ -1261,27 +1283,32 @@ Setiap method call adalah pesan yang mengalir dari UI ke Service ke Repository.
 
 **(a) Constructor Injection** — Semua service menerima Repository melalui constructor:
 
-`BukuService.java` baris 17-20:
+`BukuService.java` baris 15-17:
 ```java
-public BukuService(Repository<ItemPerpustakaan> repoBuku,
-                   Repository<Anggota> repoAnggota) {
+public BukuService(Repository<ItemPerpustakaan> repoBuku) {
     this.repoBuku = repoBuku;
+}
+```
+
+`AnggotaService.java` baris 17-19 — dependency injection untuk anggota:
+```java
+public AnggotaService(Repository<Anggota> repoAnggota) {
     this.repoAnggota = repoAnggota;
 }
 ```
 
 `PeminjamanService.java` baris 18-24 — tiga dependency di-inject via constructor.
 
-**(b) Injection via Interface** — `MenuAdmin` dan `MenuAnggota` bergantung pada interface `ILibraryService`:
+**(b) Injection via Interface** — `MenuAdmin` dan `MenuAnggota` menerima `ILibraryService` via constructor parameter (dependency injection penuh):
 ```java
-// MenuAdmin.java baris 29
-private ILibraryService service;  // bergantung pada abstraksi!
+// MenuAdmin.java baris 27-34
+private final ILibraryService service;  // bergantung pada abstraksi!
 
-public MenuAdmin() {
-    this.service = PerpustakaanService.getInstance();  // konkret di-inject
+public MenuAdmin(ILibraryService service) {
+    this.service = service;  // di-inject dari Main.java (composition root)
 }
 ```
-Ini memungkinkan penggantian implementasi service (misal untuk testing dengan mock) tanpa mengubah kode UI.
+`Main.java` bertindak sebagai composition root yang meng-inject `PerpustakaanService.getInstance()` ke constructor UI. Ini memungkinkan penggantian implementasi service (misal untuk testing dengan mock) tanpa mengubah kode UI.
 
 ---
 
@@ -1291,25 +1318,24 @@ Ini memungkinkan penggantian implementasi service (misal untuk testing dengan mo
 
 **Bukti:** `PerpustakaanService` adalah Facade yang menyembunyikan kompleksitas 3 sub-service dan 3 repository.
 
-`PerpustakaanService.java` baris 48-50 — internal wiring:
+`PerpustakaanService.java` baris 49-52 — internal wiring:
 ```java
 this.authService = new AuthService(repoAnggota);
-this.bukuService = new BukuService(repoBuku, repoAnggota);
+this.bukuService = new BukuService(repoBuku);
+this.anggotaService = new AnggotaService(repoAnggota);
 this.peminjamanService = new PeminjamanService(repoBuku, repoAnggota, repoPeminjaman);
 ```
 
-Setiap method publik mendelegasikan ke sub-service dan menangani persistensi:
+Setiap method publik mendelegasikan ke sub-service dan menangani persistensi terpusat:
 ```java
-// PerpustakaanService.java baris 144-151
+// PerpustakaanService.java — delegasi + persistAll()
 public void pinjamBuku(String idBuku, String idAnggota) throws ... {
     peminjamanService.pinjamBuku(idBuku, idAnggota);  // delegasi
-    repoBuku.saveToJson();      // persist otomatis
-    repoAnggota.saveToJson();
-    repoPeminjaman.saveToJson();
+    persistAll();  // semua repository di-save sekaligus
 }
 ```
 
-**Tanpa Facade**, client harus berinteraksi dengan 3 service + 3 repository. Dengan Facade, cukup satu panggilan: `service.pinjamBuku(idBuku, idAnggota)` di Main.java.
+**Tanpa Facade**, client harus berinteraksi dengan 4 service + 3 repository. Dengan Facade, cukup satu panggilan: `service.pinjamBuku(idBuku, idAnggota)` di Main.java.
 
 ---
 
@@ -1317,9 +1343,9 @@ public void pinjamBuku(String idBuku, String idAnggota) throws ... {
 
 **Teori:** Polymorphic deserialization adalah kemampuan merekonstruksi objek dari JSON di mana tipe konkret tidak diketahui hingga runtime. Gson secara default tidak bisa mendeserialisasi class abstract ke subclass-nya. `RuntimeTypeAdapterFactory` (dari Gson Extras) mengatasi ini dengan field discriminator.
 
-**Bukti:** `Repository.java` baris 170-194:
+**Bukti:** `GsonFactory.java` baris 38-60 (dipisahkan dari Repository agar Repository tetap generic):
 ```java
-private GsonBuilder createGson() {
+public static GsonBuilder builder() {
     RuntimeTypeAdapterFactory<ItemPerpustakaan> typeFactory =
         RuntimeTypeAdapterFactory.of(ItemPerpustakaan.class, "type")
             .registerSubtype(BukuFisik.class, "Buku Fisik")
@@ -1327,6 +1353,13 @@ private GsonBuilder createGson() {
             .registerSubtype(Jurnal.class, "Jurnal");
     // ...
 }
+```
+
+`Repository.java` menerima Gson instance dari `GsonFactory` tanpa mengetahui concrete subtypes:
+```java
+// Repository.java baris 38-39
+this.gson = GsonFactory.create();
+this.prettyGson = GsonFactory.createPretty();
 ```
 
 Saat menyimpan, field `type` diset otomatis di constructor:
@@ -1415,7 +1448,7 @@ Konstruksi singleton di sini adalah *lazy initialization* — instance dibuat sa
 |---------|-------|------------|
 | [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi / deserialisasi JSON |
 | [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk RuntimeTypeAdapterFactory |
-| [JUnit 5](https://junit.org/junit5/) | 5.10.1 | Unit testing (108 test cases) |
+| [JUnit 5](https://junit.org/junit5/) | 5.10.1 | Unit testing (120 test cases) |
 | [Mockito](https://site.mockito.org/) | 5.7.0 | Test mocking (ByteBuddy + Objenesis) |
 
 ---

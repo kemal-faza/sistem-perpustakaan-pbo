@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -195,5 +196,112 @@ class RepositoryTest {
         Type type = new TypeToken<ArrayList<TestItem>>() {}.getType();
         Repository<TestItem> emptyRepo = new Repository<>(fakePath, type);
         assertEquals(0, emptyRepo.size());
+    }
+
+    // ========== getSorted TESTS ==========
+
+    @Test
+    void testGetSortedById() {
+        repo.add(new TestItem("T003", "Tiga"));
+        repo.add(new TestItem("T001", "Satu"));
+        repo.add(new TestItem("T002", "Dua"));
+
+        List<TestItem> sorted = repo.getSorted(
+            Comparator.comparing(TestItem::getId));
+
+        assertEquals("T001", sorted.get(0).getId());
+        assertEquals("T002", sorted.get(1).getId());
+        assertEquals("T003", sorted.get(2).getId());
+        // Data internal tidak berubah
+        assertEquals(3, repo.size());
+        assertEquals("T003", repo.findById("T003").getId());
+    }
+
+    @Test
+    void testGetSortedByName() {
+        repo.add(new TestItem("T001", "Charlie"));
+        repo.add(new TestItem("T002", "Alpha"));
+        repo.add(new TestItem("T003", "Bravo"));
+
+        List<TestItem> sorted = repo.getSorted(
+            Comparator.comparing(TestItem::getName));
+
+        assertEquals("Alpha", sorted.get(0).getName());
+        assertEquals("Bravo", sorted.get(1).getName());
+        assertEquals("Charlie", sorted.get(2).getName());
+    }
+
+    @Test
+    void testGetSortedEmptyRepo() {
+        List<TestItem> sorted = repo.getSorted(
+            Comparator.comparing(TestItem::getId));
+        assertTrue(sorted.isEmpty());
+    }
+
+    @Test
+    void testGetSortedDoesNotMutateInternal() {
+        repo.add(new TestItem("T003", "Tiga"));
+        repo.add(new TestItem("T001", "Satu"));
+
+        List<TestItem> sorted = repo.getSorted(
+            Comparator.comparing(TestItem::getId));
+        assertEquals("T001", sorted.get(0).getId());
+
+        // Internal list tetap dalam urutan original (insertion order)
+        assertEquals("T003", repo.getAll().get(0).getId());
+    }
+
+    // ========== findByIdBinary TESTS ==========
+
+    @Test
+    void testFindByIdBinaryFound() {
+        repo.add(new TestItem("T003", "Tiga"));
+        repo.add(new TestItem("T001", "Satu"));
+        repo.add(new TestItem("T002", "Dua"));
+
+        TestItem found = repo.findByIdBinary("T002");
+        assertNotNull(found);
+        assertEquals("Dua", found.getName());
+    }
+
+    @Test
+    void testFindByIdBinaryFoundFirstElement() {
+        repo.add(new TestItem("T003", "Tiga"));
+        repo.add(new TestItem("T001", "Satu"));
+        repo.add(new TestItem("T002", "Dua"));
+
+        TestItem found = repo.findByIdBinary("T001");
+        assertNotNull(found);
+        assertEquals("Satu", found.getName());
+    }
+
+    @Test
+    void testFindByIdBinaryFoundLastElement() {
+        repo.add(new TestItem("T003", "Tiga"));
+        repo.add(new TestItem("T001", "Satu"));
+        repo.add(new TestItem("T002", "Dua"));
+
+        TestItem found = repo.findByIdBinary("T003");
+        assertNotNull(found);
+        assertEquals("Tiga", found.getName());
+    }
+
+    @Test
+    void testFindByIdBinaryNotFound() {
+        repo.add(new TestItem("T001", "Satu"));
+        repo.add(new TestItem("T003", "Tiga"));
+
+        assertNull(repo.findByIdBinary("T999"));
+    }
+
+    @Test
+    void testFindByIdBinaryEmptyRepo() {
+        assertNull(repo.findByIdBinary("T001"));
+    }
+
+    @Test
+    void testFindByIdBinaryNullInput() {
+        repo.add(new TestItem("T001", "Satu"));
+        assertNull(repo.findByIdBinary(null));
     }
 }

@@ -8,6 +8,7 @@ import interfaces.Identifiable;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -62,6 +63,46 @@ public class Repository<T extends Identifiable> {
     }
 
     /**
+     * Mencari item berdasarkan ID menggunakan algoritma Binary Search — O(log n).
+     * Data diurutkan by ID terlebih dahulu (jika belum sorted),
+     * kemudian dilakukan pencarian dengan membagi ruang pencarian menjadi
+     * setengah di setiap iterasi.
+     *
+     * @param id ID item yang dicari
+     * @return item jika ditemukan, null jika tidak
+     */
+    public T findByIdBinary(String id) {
+        if (id == null || items.isEmpty()) return null;
+
+        // Sort internal list by ID (ascending) untuk memastikan prasyarat binary search
+        items.sort(Comparator.comparing(Identifiable::getId,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+
+        int left = 0;
+        int right = items.size() - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            String midId = items.get(mid).getId();
+
+            if (midId == null) {
+                left = mid + 1;
+                continue;
+            }
+
+            int cmp = midId.compareTo(id);
+            if (cmp == 0) {
+                return items.get(mid);
+            } else if (cmp < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Mencari item dengan kondisi tertentu.
      * @param predicate kondisi filter
      * @return list item yang cocok
@@ -103,6 +144,20 @@ public class Repository<T extends Identifiable> {
     /** Mengambil semua item */
     public List<T> getAll() {
         return new ArrayList<>(items);
+    }
+
+    /**
+     * Mengembalikan salinan list yang sudah diurutkan berdasarkan comparator.
+     * Menerapkan algoritma Sorting (TimSort via Collections.sort) — O(n log n).
+     * Data internal tidak dimodifikasi.
+     *
+     * @param comparator comparator untuk menentukan urutan
+     * @return list baru yang sudah terurut
+     */
+    public List<T> getSorted(Comparator<T> comparator) {
+        List<T> sorted = new ArrayList<>(items);
+        sorted.sort(comparator);
+        return sorted;
     }
 
     /** Mengosongkan semua item */

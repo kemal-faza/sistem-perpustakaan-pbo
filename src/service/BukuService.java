@@ -7,6 +7,7 @@ import model.AddResult;
 import model.base.ItemPerpustakaan;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class BukuService {
@@ -57,11 +58,14 @@ public class BukuService {
     }
 
     public List<ItemPerpustakaan> getAllBuku() {
-        return repoBuku.getAll();
+        return repoBuku.getSorted(
+            Comparator.comparing(ItemPerpustakaan::getId,
+                Comparator.nullsLast(Comparator.naturalOrder()))
+        );
     }
 
     public ItemPerpustakaan getBukuById(String idBuku) {
-        return repoBuku.findById(idBuku);
+        return repoBuku.findByIdBinary(idBuku);
     }
 
     public String generateIdBuku() {

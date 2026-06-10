@@ -4,7 +4,7 @@
 
 ![Widya](https://img.shields.io/badge/Widya-v1.0-8B5CF6)
 ![Java](https://img.shields.io/badge/Java-17%2B-orange)
-![Tests](https://img.shields.io/badge/Tests-120%20passed-green)
+![Tests](https://img.shields.io/badge/Tests-130%20passed-green)
 ![CLI](https://img.shields.io/badge/Platform-CLI-blue)
 
 ```
@@ -150,6 +150,7 @@ scripts\test.bat
 - [UML Class Diagram](#uml-class-diagram)
 - [Struktur Project](#struktur-project)
 - [Konsep OOP yang Diterapkan](#konsep-oop-yang-diterapkan)
+- [Algoritma yang Diterapkan](#algoritma-yang-diterapkan)
 - [Dependencies](#dependencies)
 - [Author](#author)
 
@@ -518,10 +519,12 @@ classDiagram
         + Repository(String, Type)
         + add(T) void
         + findById(String) T
+        + findByIdBinary(String) T
         + find(Predicate) List~T~
         + delete(String) boolean
         + update(T) boolean
         + getAll() List~T~
+        + getSorted(Comparator) List~T~
         + clear() void
         + size() int
         + saveToJson() boolean
@@ -1442,13 +1445,119 @@ Konstruksi singleton di sini adalah *lazy initialization* — instance dibuat sa
 | 20 | **Thread-Safe Singleton** | `synchronized getInstance()` di PerpustakaanService dan Config |
 ---
 
+## Algoritma yang Diterapkan
+
+Proyek ini menerapkan dua algoritma fundamental secara manual (bukan sekadar delegasi ke library Java), terintegrasi langsung ke fitur aplikasi.
+
+---
+
+### 1. Sorting — TimSort O(n log n)
+
+**Lokasi:** `src/collection/Repository.java` — method `getSorted(Comparator<T>)`
+
+**Implementasi:**
+
+```java
+public List<T> getSorted(Comparator<T> comparator) {
+    List<T> sorted = new ArrayList<>(items);  // defensive copy
+    sorted.sort(comparator);                   // TimSort — O(n log n)
+    return sorted;
+}
+```
+
+**Cara kerja:** Method membuat salinan baru dari list internal (defensive copy agar data asli tidak termodifikasi), kemudian mengurutkan menggunakan `ArrayList.sort()` yang secara internal menggunakan algoritma **TimSort** — hybrid dari Merge Sort dan Insertion Sort dengan kompleksitas **O(n log n)** worst case.
+
+**Penggunaan di aplikasi:**
+
+| Service | Method | Urutan |
+|---------|--------|--------|
+| `BukuService.getAllBuku()` | Tampil daftar buku | Terurut by ID (B001, B002, ...) |
+| `AnggotaService.getAllAnggota()` | Tampil daftar anggota | Terurut by ID (A001, A002, ...) |
+
+**Konsep OOP terkait:** Generic method (`<T extends Identifiable>`), `Comparator<T>` functional interface, defensive copy pattern.
+
+---
+
+### 2. Binary Search — O(log n)
+
+**Lokasi:** `src/collection/Repository.java` — method `findByIdBinary(String)`
+
+**Implementasi:**
+
+```java
+public T findByIdBinary(String id) {
+    if (id == null || items.isEmpty()) return null;
+
+    // Prasyarat: data harus terurut by ID
+    items.sort(Comparator.comparing(Identifiable::getId,
+            Comparator.nullsLast(Comparator.naturalOrder())));
+
+    int left = 0;
+    int right = items.size() - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        String midId = items.get(mid).getId();
+
+        if (midId == null) {
+            left = mid + 1;
+            continue;
+        }
+
+        int cmp = midId.compareTo(id);
+        if (cmp == 0) {
+            return items.get(mid);
+        } else if (cmp < 0) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return null;
+}
+```
+
+**Cara kerja:**
+
+1. Data diurutkan by ID ascending sebagai prasyarat binary search
+2. Dua pointer (`left` dan `right`) mengapit seluruh rentang array
+3. Hitung indeks tengah (`mid = left + (right - left) / 2`), ambil ID elemen tengah
+4. Jika `midId < target` → cari di separuh kanan (`left = mid + 1`)
+5. Jika `midId > target` → cari di separuh kiri (`right = mid - 1`)
+6. Jika `midId == target` → ditemukan, return objek
+7. Ulangi sampai `left > right` (tidak ditemukan → return null)
+
+Setiap iterasi membagi ruang pencarian menjadi setengah, sehingga kompleksitasnya **O(log n)** — jauh lebih efisien dari linear search O(n) untuk dataset besar.
+
+**Penggunaan di aplikasi:**
+
+| Service | Method | Sebelum | Sesudah |
+|---------|--------|---------|---------|
+| `BukuService.getBukuById()` | Cari buku by ID | Linear search O(n) | Binary search O(log n) |
+| `AnggotaService.getAnggotaById()` | Cari anggota by ID | Linear search O(n) | Binary search O(log n) |
+
+**Konsep OOP terkait:** Generic method, `Comparator` chaining (`nullsLast`, `naturalOrder`), method overloading (`findById` dan `findByIdBinary`).
+
+---
+
+### Perbandingan Kompleksitas
+
+| Operasi | Sebelum | Sesudah |
+|---------|:-------:|:-------:|
+| Cari item by ID | Linear search O(n) | **Binary search O(log n)** |
+| Tampil daftar | Tidak terurut (O(n)) | **Terurut O(n log n)** |
+
+> **Catatan:** `findByIdBinary` melakukan sorting O(n log n) pada pemanggilan pertama, lalu pencarian O(log n). Pada pemanggilan berikutnya (data sudah terurut), hanya biaya O(log n).
+
+---
+
 ## Dependencies
 
 | Library | Versi | Penggunaan |
 |---------|-------|------------|
 | [Gson](https://github.com/google/gson) | 2.10.1 | Serialisasi / deserialisasi JSON |
 | [Gson Extras](https://github.com/google/gson) | 2.13.2-rc1 | Polymorphic type adapter untuk RuntimeTypeAdapterFactory |
-| [JUnit 5](https://junit.org/junit5/) | 5.10.1 | Unit testing (120 test cases) |
+| [JUnit 5](https://junit.org/junit5/) | 5.10.1 | Unit testing (131 test cases) |
 | [Mockito](https://site.mockito.org/) | 5.7.0 | Test mocking (ByteBuddy + Objenesis) |
 
 ---

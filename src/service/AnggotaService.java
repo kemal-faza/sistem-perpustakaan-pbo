@@ -3,6 +3,7 @@ package service;
 import collection.Repository;
 import model.Anggota;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -23,14 +24,17 @@ public class AnggotaService {
         repoAnggota.add(anggota);
     }
 
-    /** Mendapatkan semua anggota terdaftar */
+    /** Mendapatkan semua anggota terdaftar (terurut by ID) */
     public List<Anggota> getAllAnggota() {
-        return repoAnggota.getAll();
+        return repoAnggota.getSorted(
+            Comparator.comparing(Anggota::getId,
+                Comparator.nullsLast(Comparator.naturalOrder()))
+        );
     }
 
-    /** Mendapatkan anggota berdasarkan ID */
+    /** Mendapatkan anggota berdasarkan ID (binary search) */
     public Anggota getAnggotaById(String idAnggota) {
-        return repoAnggota.findById(idAnggota);
+        return repoAnggota.findByIdBinary(idAnggota);
     }
 
     /** Generate ID unik untuk anggota baru (format: AXXX) */
